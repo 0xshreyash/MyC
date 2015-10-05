@@ -1,0 +1,61 @@
+S0: query = KING
+---
+Down, down, down. Would the fall NEVER come to an end! 'I wonder how
+S1: line     1, bytes = 68
+S2: line     1, score =  1.000
+S4: line     1, score =  0.000
+---
+many miles I've fallen by this time?' she said aloud. 'I must be getting
+S1: line     2, bytes = 72
+S2: line     2, score =  1.000
+S4: line     2, score =  0.238
+---
+somewhere near the centre of the earth. Let me see: that would be four
+S1: line     3, bytes = 70
+S2: line     3, score =  0.000
+S4: line     3, score =  0.000
+---
+thousand miles down, I think--' (for, you see, Alice had learnt several
+S1: line     4, bytes = 71
+S2: line     4, score =  1.000
+S4: line     4, score =  0.000
+---
+things of this sort in her lessons in the schoolroom, and though this
+S1: line     5, bytes = 69
+S2: line     5, score =  0.000
+S4: line     5, score =  0.239
+---
+was not a VERY good opportunity for showing off her knowledge, as there
+S1: line     6, bytes = 71
+S2: line     6, score =  0.000
+S4: line     6, score =  0.238
+---
+was no one to listen to her, still it was good practice to say it over)
+S1: line     7, bytes = 71
+S2: line     7, score =  0.000
+S4: line     7, score =  0.000
+---
+'--yes, that's about the right distance--but then I wonder what Latitude
+S1: line     8, bytes = 72
+S2: line     8, score =  1.000
+S4: line     8, score =  0.000
+---
+or Longitude I've got to?' (Alice had no idea what Latitude was, or
+S1: line     9, bytes = 67
+S2: line     9, score =  1.000
+S4: line     9, score =  0.000
+---
+Longitude either, but thought they were nice grand words to say.)
+S1: line    10, bytes = 65
+S2: line    10, score =  0.000
+S4: line    10, score =  0.000
+------------------------------------------------
+S3: line     5, score =  0.239
+things of this sort in her lessons in the schoolroom, and though this
+---
+S3: line     6, score =  0.238
+was not a VERY good opportunity for showing off her knowledge, as there
+---
+S3: line     2, score =  0.238
+many miles I've fallen by this time?' she said aloud. 'I must be getting
+---

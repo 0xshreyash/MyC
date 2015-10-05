@@ -1,0 +1,58 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define N 100
+int* selection(int A[],int i);
+int
+main(int argc,char *argv[])
+{
+	int A[N],n=0,next=0,excess=0,i;
+	int *p;
+	printf("Enter upto %d values and enter ^D for termination",N);
+	while(scanf("%d",&next)==1)
+	{
+		if(n<N)
+		{
+			A[n]=next;
+			n++;
+		}
+		else{
+			excess++;
+			printf("We have an excess of elements");
+		}
+	}	
+i=n-1;
+p=selection(A,i);
+for(i=0;i<n;i++)
+{
+	printf("\n %d",*(p+i));
+}
+}
+
+int* selection(int A[],int i)
+{
+	int j,temp;
+	if(i>0)
+	{
+		for(j=0;j<i-1;j++)
+		{
+			if(A[j]>A[i])
+			{
+				temp=A[i];
+				A[i]=A[j];
+				A[j]=temp;
+			}
+		}
+			return selection(A,i--);
+	}
+	else if(i==0)
+	{
+	
+		return A;
+	}
+	return A;
+		
+	
+}
+	
+	
+
