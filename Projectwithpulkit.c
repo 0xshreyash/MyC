@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
 	int (*F[4])(int,int);
 	int sum=0;
-	F[0]=add;
+	F[0]=add;xo
 	F[1]=subtract;
 	F[2]=multiply;
 	F[3]=divide;
@@ -141,15 +141,18 @@ int main(int argc, char *argv[])
 
 	printf("You need to make the number %d\n",to_make);
 
-    /*printf("Please enter how you want answer:\n")
-
+    printf("Please enter how you want answer:\n");
+    i=0;
+    char c;
     while((c=getchar())!=EOF)
     {
 
     	inp[i++]=c;
 
     }
-    inp[i]='\0';   
+    inp[i]='\0';  
+    printf("%s",inp);
+ 
     int num_count=0;
     int char_count=0;
     int sum=0;

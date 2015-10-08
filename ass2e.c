@@ -7,6 +7,7 @@
 
 #define MALLOC_MSG "memory allocation"
 #define REALLOC_MSG "memory reallocation"
+#define INITIAL_SIZE 100
 
 
 
@@ -52,7 +53,7 @@ recursive_traverse(node_t *root, void action(void*));
 void
 print_then_free(void *x);
 void
-traverse_tree(tree_t *tree, void action(void*)) ;
+traverse_tree(tree_t *tree, void action(void*));
 
 
 int
@@ -65,7 +66,7 @@ main(int argc, char *argv[])
 	int i,j,k;
 	int count = 0;
 	int byte = 0;
-	int length = 1; 
+	int length; 
 
 
 	input_file = get_inputs();
@@ -76,62 +77,49 @@ main(int argc, char *argv[])
 	strcpy(current_phrase,"");
 	initial = malloc(sizeof(*new));
 	assert(initial!=NULL);
+
 	initial->data = malloc(strlen(current_phrase)+1);
 	assert(initial->data!=NULL);
+
 	strcpy(initial->data,current_phrase); 
 	initial->max_match = 0;
 	initial->entry = count;
 	count++;
 	tree = insert_in_order(tree, initial);
 	int entryno = 1;
+	length = 1;
+	int phrase_index = 0;
 
-	while((byte+length)<strlen(input_file))
+	for(i=0;i<strlen(input_file);i++)
 	{
-		strncpy(current_phrase, input_file+byte, length);
-		current_phrase[length] = '\0';
-		printf("%s\n",current_phrase);
+		printf("eec");
 		new = malloc(sizeof(*new));
-		new->data = current_phrase;
-		new->max_match = 0;
-		locn = search_tree(tree, new);
-		if(!locn)
+		current_phrase[phrase_index] = input_file[i];
+		current_phrase[phrase_index+1] = '\0';
+		locn = search_tree(tree, current_phrase);
+		if(locn)
 		{
-			new->entry = entryno++;
-			new->data = malloc(sizeof(char)*(strlen(current_phrase)+1));
+			phrase_index ++;
+			new->max_match = locn->entry;
+		}
+		else if(!locn)
+		{
+			new->data = malloc(strlen(current_phrase)+1);
 			strcpy(new->data, current_phrase);
-			tree = insert_in_order(tree, new);
-			free(new->data);
-			free(new);
-			byte = byte + length;
-			//entryno ++;
-			length = 1;
-			continue;
+			new->entry = entryno;
+			insert_in_order(tree, new);
+			entryno++;
+			phrase_index = 0;
 		}
-		else if(locn)
-		{
-			new->max_match = locn-> entry;
-			length++;
-			continue;
-		}
+
 	}
+
 
 
 
 	traverse_tree(tree, print_then_free);
 
-
-
-
-
-
-
-
-
-
-
 	/*printf("%s",input_file);*/
-
-
 	return 0 ;
 
 
@@ -140,19 +128,21 @@ char
 *get_inputs()
 {
 	char *input_file, c;
-	int n = 0, size = 1;
-	
-
-	input_file = (char *) malloc(size*sizeof(char *));
+	int n = 0;
+	input_file = (char *) malloc(INITIAL_SIZE*sizeof(char));
 	exit_if_null(input_file,MALLOC_MSG);
 
 	while((c=getchar())!=EOF)
 	{
-		input_file = (char*) realloc(input_file, (size+1)*sizeof(char *));
 		exit_if_null(input_file,REALLOC_MSG);
 		input_file[n]=c;
 		n++;
-		size++;
+		if(n == INITIAL_SIZE)
+		{
+			input_file = (char *) malloc(2*n*sizeof(char));
+			exit_if_null(input_file,MALLOC_MSG);
+		}
+	
 	}
 	input_file[n]='\0';
 	return input_file;
