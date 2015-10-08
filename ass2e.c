@@ -7,7 +7,6 @@
 
 #define MALLOC_MSG "memory allocation"
 #define REALLOC_MSG "memory reallocation"
-#define INITIAL_SIZE 100
 
 
 
@@ -53,7 +52,7 @@ recursive_traverse(node_t *root, void action(void*));
 void
 print_then_free(void *x);
 void
-traverse_tree(tree_t *tree, void action(void*));
+traverse_tree(tree_t *tree, void action(void*)) ;
 
 
 int
@@ -66,50 +65,51 @@ main(int argc, char *argv[])
 	int i,j,k;
 	int count = 0;
 	int byte = 0;
-	int length; 
+	int length = 1; 
+	int size = 0;
+	int phrase_index = 0;
+
+	tree = make_empty_tree(string_cmp);
 
 
 	input_file = get_inputs();
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
-
-	tree = make_empty_tree(string_cmp);
-
 	strcpy(current_phrase,"");
+
 	initial = malloc(sizeof(*new));
 	assert(initial!=NULL);
-
 	initial->data = malloc(strlen(current_phrase)+1);
 	assert(initial->data!=NULL);
-
 	strcpy(initial->data,current_phrase); 
-	initial->max_match = 0;
-	initial->entry = count;
-	count++;
+	initial->entry = size;
+	size++;
+	initial->max_match = 0; 
 	tree = insert_in_order(tree, initial);
-	int entryno = 1;
-	length = 1;
-	int phrase_index = 0;
-
-	for(i=0;i<strlen(input_file);i++)
+	for(i=0; i<strlen(input_file)-1; i++)
 	{
-		printf("eec");
-		new = malloc(sizeof(*new));
 		current_phrase[phrase_index] = input_file[i];
-		current_phrase[phrase_index+1] = '\0';
-		locn = search_tree(tree, current_phrase);
-		if(locn)
-		{
-			phrase_index ++;
-			new->max_match = locn->entry;
-		}
-		else if(!locn)
+		current_phrase[phrase_index + 1] = '\0';
+		new = malloc(sizeof(*new));
+		new->max_match = 0;
+		new->data = current_phrase;
+		locn = search_tree(tree, new);
+		if(!locn)
 		{
 			new->data = malloc(strlen(current_phrase)+1);
 			strcpy(new->data, current_phrase);
-			new->entry = entryno;
-			insert_in_order(tree, new);
-			entryno++;
+			new->entry = size;
+			tree = insert_in_order(tree, new);
+			/* free(new->data);
+			free(new); */
+			size++;
+			strcpy(current_phrase, "");
 			phrase_index = 0;
+
+		}
+		else
+		{
+			new->max_match = locn->entry;
+			phrase_index++;
 		}
 
 	}
@@ -119,7 +119,19 @@ main(int argc, char *argv[])
 
 	traverse_tree(tree, print_then_free);
 
+
+
+
+
+
+
+
+
+
+
 	/*printf("%s",input_file);*/
+
+
 	return 0 ;
 
 
@@ -128,21 +140,23 @@ char
 *get_inputs()
 {
 	char *input_file, c;
-	int n = 0;
-	input_file = (char *) malloc(INITIAL_SIZE*sizeof(char));
+	int n = 0, size = 100;
+	
+
+	input_file =  malloc(size);
 	exit_if_null(input_file,MALLOC_MSG);
 
 	while((c=getchar())!=EOF)
 	{
-		exit_if_null(input_file,REALLOC_MSG);
+		
 		input_file[n]=c;
 		n++;
-		if(n == INITIAL_SIZE)
+		if(n == size)
 		{
-			input_file = (char *) malloc(2*n*sizeof(char));
-			exit_if_null(input_file,MALLOC_MSG);
+			input_file = realloc(input_file, 2*n);
+			size = 2*n;
 		}
-	
+		
 	}
 	input_file[n]='\0';
 	return input_file;
