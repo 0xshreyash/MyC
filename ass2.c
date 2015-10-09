@@ -1,121 +1,165 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <strings.h>
 #include <ctype.h>
+#include <string.h>
+#include <strings.h>
+
+#define MALLOC_MSG "memory allocation"
+#define REALLOC_MSG "memory reallocation"
 
 
-#define MALLOC_MESSAGE "Memory allocation"
-#define REALLOC_MESSAGE "Memory reallocation"
 
 typedef struct node node_t;
 
-struct node {
-	char *data;              /* data stores the phrase */
-	int entry;               /* entry stores the entry number of current phrase */
+struct node 
+{
+	void *data; 
+	int entry;             /* ptr to stored structure */
 	node_t *left;            /* left subtree of node */
 	node_t *rght;            /* right subtree of node */
 };
 
 typedef struct 
 {
-	node_t *root;            /* root node of the tree, pointer to the very begining 
-                              * of the dictionary */
+	node_t *root; /* root node of the tree, pointer to the very begining 
+	of the tree */
 	int (*cmp)(void*,void*); /* function pointer, to the comparison function 
-	                          * of the  dictionary */
-} dictionary_t;
+	of the tree */
+} tree_t;
 
+/* prototypes for the functions in this library */
 
-char* get_inputs();
+tree_t *make_empty_tree(int func(void*,void*));
+int is_empty_tree(tree_t *tree);
+void *search_tree(tree_t *tree, void *key);
+tree_t *insert_in_order(tree_t *tree, void *value);
+void free_tree(tree_t *tree);
 
-dictionary_t *make_empty_dictionary(int func(void*,void*));
-
-node_t *initialize_first_node(char *current_phrase);
-
-void *search_dictionary(dictionary_t *dict, void *key);
-void *recursive_search_dictionary(node_t*, void*, int(void*,void*));
-
-dictionary_t *insert_in_order(dictionary_t *dict, void *value);
-node_t *recursive_insert(node_t*, node_t*, int(void*,void*));
-
-void free_dictionary(dictionary_t *dict);
-void recursive_free_dictionary(node_t*);
-
-void traverse_tree(dictionary_t *dict, void action(void*));
-void recursive_traverse(node_t*, void action(void*));
-
+static void *recursive_search_tree(node_t*, void*,
+		int(void*,void*));
+static node_t *recursive_insert(node_t*, node_t*,
+		int(void*,void*));
+static void recursive_free_tree(node_t*);
 int string_cmp(void *a, void *b);
 
-void print_then_free(void *x);
+char *get_inputs();
+void exit_if_null(char *ptr, char *message); 
+static void
+recursive_traverse(node_t *root, void action(void*));
+
+void
+print_then_free(void *x);
+void
+traverse_tree(tree_t *tree, void action(void*)) ;
 
 
 int
-main(int argc, char *argv[]) 
+main(int argc, char *argv[])
 {
-	char *input_file;
-	char *current_phrase;
-	char *new_string;
-    int i,j,k;
-    int count = 1;
+	char *input_file, *new_input_file;
+	node_t *new, *locn, *max_locn, *initial;
+	tree_t *tree;
+	char* current_phrase;
+	int i,j,k;
+	int count = 0;
+	int byte = 0;
+	int length = 1; 
+	int size = 0;
+	int phrase_index = 0;
+
+	tree = make_empty_tree(string_cmp);
 
 
-	dictionary_t *dict;
-
-	dict = make_empty_dictionary(string_cmp);
-
-	node_t *new, *initial, *locn, *longest_locn;
 	input_file = get_inputs();
+	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
+	strcpy(current_phrase,"");
+
+	initial = malloc(sizeof(*new));
+	assert(initial!=NULL);
+	initial->data = malloc(strlen(current_phrase)+1);
+	assert(initial->data!=NULL);
+	strcpy(initial->data,current_phrase); 
+	initial->entry = size;
+	size++;
+	tree = insert_in_order(tree, initial);
+	int temp = 0;
+	for(i=0; i<strlen(input_file)-1; i++)
+	{
+
+		new = malloc(sizeof(*new));
+
+		if(input_file[i]=='\n')
+		{
+			new->data = malloc(strlen(current_phrase)+1);
+			strcpy(new->data, current_phrase);
+			new->entry = size;
+			tree = insert_in_order(tree, new);
+			printf("%c%d\n", current_phrase[phrase_index], temp);
+			size++;
+			strcpy(current_phrase, "");
+			phrase_index = 0;
+			temp = 0;
+
+		}
+
+		current_phrase[phrase_index] = input_file[i];
+		current_phrase[phrase_index + 1] = '\0';
+		new->data = current_phrase;
+		locn = search_tree(tree, new);
+
+		if(!locn)
+		{
+			new->data = malloc(strlen(current_phrase)+1);
+			strcpy(new->data, current_phrase);
+			new->entry = size;
+			tree = insert_in_order(tree, new); 
+			printf("%c%d\n", current_phrase[phrase_index], temp);
+			size++;
+			strcpy(current_phrase, "");
+			phrase_index = 0;
+			temp = 0;
+
+		}
+		else
+		{
+			temp = locn->entry;
+			phrase_index++;
+		}
+
+	}
+
+	return 0 ;
+
+
+}
+char
+*get_inputs()
+{
+	char *input_file, c;
+	int n = 0, size = 100;
 	
-    current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
-    strcpy(current_phrase,"\0");
 
-    initial = initialize_first_node(current_phrase);
-	dict = insert_in_order(dict, initial);
+	input_file =  malloc(size);
+	exit_if_null(input_file,MALLOC_MSG);
 
-	strcpy(current_phrase,"Hello\0");
-	new = malloc(sizeof(new));
-	new->data= current_phrase;
-	locn = search_dictionary(dict, new);
-	if(!locn)
+	while((c=getchar())!=EOF)
 	{
-		new->data = malloc(strlen(current_phrase)+1);
-		new->entry = count; 
-		count ++;
-		dict = insert_in_order(dict, new);
-		free(new->data);
-		free(new);
+		
+		input_file[n]=c;
+		n++;
+		if(n == size)
+		{
+			input_file = realloc(input_file, 2*n);
+			size = 2*n;
+		}
+		
 	}
-
-	strcpy(current_phrase,"Hi\0");
-	new->data= current_phrase;
-	locn = search_dictionary(dict, new);
-	if(!locn)
-	{
-		new->data = malloc(strlen(current_phrase)+1);
-		new->entry = count; 
-		count ++;
-		dict = insert_in_order(dict, new);
-	}
-
-	strcpy(current_phrase,"Hello\0");
-	new->data= current_phrase;
-	locn = search_dictionary(dict, new);
-	if(!locn)
-	{
-		new->data = malloc(strlen(current_phrase)+1);
-		new->entry = count; 
-		count ++;
-		dict = insert_in_order(dict, new);
-	}
-
-	traverse_tree(dict,print_then_free);
-	free_dictionary(dict);
-
-	return 0;
+	input_file[n]='\0';
+	return input_file;
 }
 void
-exit_if_null(void *ptr, char *message) 
+exit_if_null(char *ptr, char *message) 
 {
 	if (!ptr) 
 	{
@@ -123,89 +167,135 @@ exit_if_null(void *ptr, char *message)
 		exit(EXIT_FAILURE);
 	}
 }
-char
-*get_inputs()
+tree_t
+*make_empty_tree(int func(void*,void*)) 
 {
-	char *input_file, c;
-	int n = 0, size = 1;
-	
-
-	input_file = (char *) malloc(size*sizeof(char *));
-	exit_if_null(input_file,MALLOC_MESSAGE);
-
-	while((c=getchar())!=EOF)
-	{
-		input_file = (char*) realloc(input_file, (size+1)*sizeof(char *));
-		exit_if_null(input_file,REALLOC_MESSAGE);
-		input_file[n]=c;
-		n++;
-		size++;
-	}
-	input_file[n]='\0';
-	return input_file;
-}
-
-dictionary_t
-*make_empty_dictionary(int func(void*,void*))
- {
-	dictionary_t *dict;
-	dict = malloc(sizeof(*dict));
-	assert(dict!=NULL);
+	tree_t *tree;
+	tree = malloc(sizeof(*tree));
+	assert(tree!=NULL);
 	/* initialize tree to empty */
-	dict->root = NULL;
+	tree->root = NULL;
 	/* and save the supplied function pointer */
-	dict->cmp = func;    /* Into the cmp field of the the tree */     
-	return dict;
+	tree->cmp = func;    /* Into the cmp field of the the tree */     
+	return tree;
 }
 
-/* int
+int
 is_empty_tree(tree_t *tree) 
 {
 	assert(tree!=NULL);
 	return tree->root==NULL;
+
 }
-*/
 
-void
-*search_dictionary(dictionary_t *dict, void *key)
-{
-	assert(dict!=NULL);
-	return recursive_search_dictionary(dict->root, key, dict->cmp);
-} /* The interface function that can be called from the other side it in 
-     turn calls the recursive function */
 
-void
-*recursive_search_dictionary(node_t *root,
-		void *key, int cmp(void*,void*))
+static void
+*recursive_search_tree(node_t *root,
+		void *key, int cmp(void*,void*)) 
 {
 	int outcome;
-	if (!root)
-	{
+	if (!root) {
 		return NULL; /* Return null if there is no root */
 	}
-	if ((outcome=cmp(key, root->data)) < 0)
-	{
-		return recursive_search_dictionary(root->left, key, cmp);
-	}
-	else if (outcome > 0)
-	{
-		return recursive_search_dictionary(root->rght, key, cmp);
-	}
-	else 
-	{
-		/* must have found it! */
+	if ((outcome=cmp(key, root->data)) < 0) {
+		return recursive_search_tree(root->left, key, cmp);
+	} else if (outcome > 0) {
+		return recursive_search_tree(root->rght, key, cmp);
+	} else {
+		/* hey, must have found it! */
 		return root->data; 
 	}
 }
 
-node_t
-*initialize_first_node(char *current_phrase)
+/* Returns a pointer to the tree node storing object "key",
+   if it exists, otherwise returns a NULL pointer. */
+void
+*search_tree(tree_t *tree, void *key) 
 {
-	node_t *initial;
-	initial = malloc(sizeof(*initial));
-	initial->data = current_phrase;
-	initial->entry = 0;
-	return initial;
+	assert(tree!=NULL);
+	return recursive_search_tree(tree->root, key, tree->cmp);
+} /* The interface function that can be called from the other side it in 
+     turn calls the recursive function */
+
+
+
+
+/* Returns a pointer to an altered tree that now includes
+   the object "value" in its correct location. */
+tree_t
+*insert_in_order(tree_t *tree, void *value) 
+{
+	node_t *new;
+	/* make the new node */
+	new = malloc(sizeof(*new));
+	assert(tree!=NULL && new!=NULL);
+	new->data = value;
+	new->left = new->rght = NULL; /* Multiple assignment statements together */
+	/* and insert it into the tree */
+	tree->root = recursive_insert(tree->root, new,
+		tree->cmp); /* All three are pointers */
+	return tree;
+}
+
+static node_t
+*recursive_insert(node_t *root, node_t *new,
+		int cmp(void*,void*)) {
+	if (root==NULL) 
+	{
+		return new;
+	}
+	else if (cmp(new->data, root->data) < 0) 
+	{
+		root->left = recursive_insert(root->left, new, cmp);
+	}
+	else if(cmp(new->data, root->data) > 0)
+	{
+		root->rght = recursive_insert(root->rght, new, cmp);
+	}
+	return root;
+}
+
+
+
+static void
+recursive_traverse(node_t *root, void action(void*)) {
+	if (root) {
+		recursive_traverse(root->left, action);
+		action(root->data);
+		recursive_traverse(root->rght, action);
+	}
+} 
+
+ /*Applies the "action" at every node in the tree, in
+   the order determined by the cmp function. */
+void
+traverse_tree(tree_t *tree, void action(void*)) 
+{
+	assert(tree!=NULL);
+	recursive_traverse(tree->root, action);
+}
+
+
+
+
+static void
+recursive_free_tree(node_t *root) 
+{
+	if (root) {
+		recursive_free_tree(root->left);
+		recursive_free_tree(root->rght);
+		free(root);
+	}
+}
+
+/* Release all memory space associated with the tree
+   structure. */
+void
+free_tree(tree_t *tree) 
+{
+	assert(tree!=NULL);
+	recursive_free_tree(tree->root);
+	free(tree);
 }
 int
 string_cmp(void *a, void *b)
@@ -224,89 +314,3 @@ string_cmp(void *a, void *b)
 		return -1;
 	}
 }
-
-dictionary_t
-*insert_in_order(dictionary_t *dict, void *phrase) 
-{
-	node_t *new;
-	static int ent = 1;
-	/* make the new node */
-	new = malloc(sizeof(*new));
-	assert(dict!=NULL && new!=NULL);
-	new->data = phrase;
-	new->entry = ent;
-	ent++;
-	new->left = new->rght = NULL; /* Multiple assignment statements together */
-	/* and insert it into the tree */
-	dict->root = recursive_insert(dict->root, new, dict->cmp); /* All three are pointers */
-	return dict;
-}
-
-node_t
-*recursive_insert(node_t *root, node_t *new,
-		int cmp(void*,void*))
-{
-	if (root==NULL) {
-		return new;
-	} else if (cmp(new->data, root->data) < 0) {
-		root->left = recursive_insert(root->left, new, cmp);
-	} else {
-		root->rght = recursive_insert(root->rght, new, cmp);
-	}
-	return root;
-}
-
-
-void
-recursive_traverse(node_t *root, void action(void*)) {
-	if (root) {
-		recursive_traverse(root->left, action);
-		action(root->data);
-		recursive_traverse(root->rght, action);
-	}
-}
-
-/* Applies the "action" at every node in the tree, in
-   the order determined by the cmp function. */
-void
-traverse_tree(dictionary_t *dict, void action(void*)) {
-	assert(dict!=NULL);
-	recursive_traverse(dict->root, action);
-}
-void
-print_then_free(void *x) {
-	node_t *p=x;
-	printf("%s %d\n", p->data, p->entry);
-	free(p->data);
-	free(p);
-}
-void
-free_dictionary(dictionary_t *dict) {
-	assert(dict!=NULL);
-	recursive_free_dictionary(dict->root);
-	free(dict);
-}
-void
-recursive_free_dictionary(node_t *root) 
-{
-	 if(root) 
-	 {
-		recursive_free_dictionary(root->left);
-		recursive_free_dictionary(root->rght);
-		free((void *)root);
-	 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
