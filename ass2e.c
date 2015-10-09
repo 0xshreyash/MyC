@@ -93,6 +93,7 @@ main(int argc, char *argv[])
 		new->max_match = 0;
 		new->data = current_phrase;
 		locn = search_tree(tree, new);
+		printf()
 		if(!locn)
 		{
 			new->data = malloc(strlen(current_phrase)+1);
@@ -108,16 +109,11 @@ main(int argc, char *argv[])
 		}
 		else
 		{
-			new->max_match = locn->entry;
+			max_match = locn->entry;
 			phrase_index++;
 		}
 
 	}
-
-
-
-
-	traverse_tree(tree, print_then_free);
 
 
 

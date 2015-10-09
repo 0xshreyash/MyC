@@ -15,7 +15,6 @@ typedef struct node node_t;
 struct node 
 {
 	void *data; 
-	int max_match;
 	int entry;             /* ptr to stored structure */
 	node_t *left;            /* left subtree of node */
 	node_t *rght;            /* right subtree of node */
@@ -49,11 +48,6 @@ void exit_if_null(char *ptr, char *message);
 static void
 recursive_traverse(node_t *root, void action(void*));
 
-void
-print_then_free(void *x);
-void
-traverse_tree(tree_t *tree, void action(void*)) ;
-
 
 int
 main(int argc, char *argv[])
@@ -66,7 +60,7 @@ main(int argc, char *argv[])
 	int count = 0;
 	int byte = 0;
 	int length = 1; 
-	int size = 0;
+	size_t size = 0;
 	int phrase_index = 0;
 
 	tree = make_empty_tree(string_cmp);
@@ -83,20 +77,19 @@ main(int argc, char *argv[])
 	strcpy(initial->data,current_phrase); 
 	initial->entry = size;
 	size++;
-	initial->max_match = 0; 
 	tree = insert_in_order(tree, initial);
 	for(i=0; i<strlen(input_file)-1; i++)
 	{
 		
-		if(input_file[i]=='\0' || input_file[i]=='\n')
+		if((input_file[i]=='\0' || input_file[i]=='\n'))
 		{
 			new->data = malloc(strlen(current_phrase)+1);
 			strcpy(new->data, current_phrase);
 			new->entry = size;
 			tree = insert_in_order(tree, new);
+			size++;
 			/* free(new->data);
 			free(new); */
-			size++;
 			strcpy(current_phrase, "");
 			phrase_index = 0;
 			continue;
@@ -106,16 +99,18 @@ main(int argc, char *argv[])
 		current_phrase[phrase_index] = input_file[i];
 		current_phrase[phrase_index + 1] = '\0';
 		new = malloc(sizeof(*new));
-		new->max_match = 0;
 		new->data = current_phrase;
 		locn = search_tree(tree, new);
-
+		int max_match = 0;
 		if(!locn)
 		{
+			printf("%zu\n", size);
 			new->data = malloc(strlen(current_phrase)+1);
 			strcpy(new->data, current_phrase);
 			new->entry = size;
 			tree = insert_in_order(tree, new);
+			printf("%s%d\n", current_phrase, max_match );
+
 			/* free(new->data);
 			free(new); */
 			size++;
@@ -125,14 +120,11 @@ main(int argc, char *argv[])
 		}
 		else
 		{
-			new->max_match = locn->entry;
+			max_match = locn->entry;
 			phrase_index++;
 		}
 
 	}
-	
-	traverse_tree(tree, print_then_free);
-	/*printf("%s",input_file);*/
 
 
 	return 0 ;
@@ -209,7 +201,7 @@ static void
 		return recursive_search_tree(root->rght, key, cmp);
 	} else {
 		/* hey, must have found it! */
-		return root->data; 
+		return root; 
 	}
 }
 
@@ -263,31 +255,6 @@ static node_t
 
 
 
-static void
-recursive_traverse(node_t *root, void action(void*)) {
-	if (root) {
-		recursive_traverse(root->left, action);
-		action(root->data);
-		recursive_traverse(root->rght, action);
-	}
-} 
-
- /*Applies the "action" at every node in the tree, in
-   the order determined by the cmp function. */
-void
-traverse_tree(tree_t *tree, void action(void*)) 
-{
-	assert(tree!=NULL);
-	recursive_traverse(tree->root, action);
-}
-void
-print_then_free(void *x) {
-	node_t *p=x;
-	printf("%4d %4d  %s\n", p->max_match, p->entry, p->data);
-	free(p->data);
-	free(p);
-
-}
 
 
 
