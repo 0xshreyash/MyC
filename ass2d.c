@@ -1,4 +1,4 @@
-th each line composed of two components:
+/*th each line composed of two components:
    	-- a single character, the "extension"
 	-- a single integer, the "copystring"
    Lines are terminated by a newline, and have no other content.

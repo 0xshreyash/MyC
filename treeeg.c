@@ -47,7 +47,11 @@ main(int argc, char *argv[]) {
 			strcpy(new->word, oneword);
 			/* and insert into tree */
 			tree = insert_in_order(tree, new);
-		} else {
+			
+
+		} 
+		else 
+		{
 			/* already in tree, so increment count */
 			locn->freq += 1;
 			/* and release the temporary node */

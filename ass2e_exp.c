@@ -5,9 +5,12 @@
 #include <string.h>
 #include <strings.h>
 
+/****************************************************************/
+
 #define MALLOC_MSG "memory allocation"
 #define REALLOC_MSG "memory reallocation"
 
+/****************************************************************/
 
 
 typedef struct node node_t;
@@ -28,10 +31,11 @@ typedef struct
 	of the tree */
 } tree_t;
 
+/****************************************************************/
+
 /* prototypes for the functions in this library */
 
 tree_t *make_empty_tree(int func(void*,void*));
-int is_empty_tree(tree_t *tree);
 void *search_tree(tree_t *tree, void *key);
 tree_t *insert_in_order(tree_t *tree, void *value);
 void free_tree(tree_t *tree);
@@ -41,27 +45,23 @@ static void *recursive_search_tree(node_t*, void*,
 static node_t *recursive_insert(node_t*, node_t*,
 		int(void*,void*));
 static void recursive_free_tree(node_t*);
-int string_cmp(void *a, void *b);
 
+int string_cmp(void *a, void *b);
 char *get_inputs();
 void exit_if_null(char *ptr, char *message); 
-static void
-recursive_traverse(node_t *root, void action(void*));
+node_t *initialize_first_node(char *current_phrase, int size);
+void encode_tree(tree_t *tree, char *input_file,int size);
 
+/****************************************************************/
 
 int
 main(int argc, char *argv[])
 {
-	char *input_file, *new_input_file;
-	node_t *new, *locn, *max_locn, *initial;
+	char *input_file; 
+	node_t *initial; 
 	tree_t *tree;
 	char* current_phrase;
-	int i,j,k;
-	int count = 0;
-	int byte = 0;
-	int length = 1; 
-	size_t size = 0;
-	int phrase_index = 0;
+	int size = 0;
 
 	tree = make_empty_tree(string_cmp);
 
@@ -70,67 +70,19 @@ main(int argc, char *argv[])
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
 	strcpy(current_phrase,"");
 
-	initial = malloc(sizeof(*new));
-	assert(initial!=NULL);
-	initial->data = malloc(strlen(current_phrase)+1);
-	assert(initial->data!=NULL);
-	strcpy(initial->data,current_phrase); 
-	initial->entry = size;
+	initial = initialize_first_node(current_phrase, size);
 	size++;
 	tree = insert_in_order(tree, initial);
-	for(i=0; i<strlen(input_file)-1; i++)
-	{
-		
-		if((input_file[i]=='\0' || input_file[i]=='\n'))
-		{
-			new->data = malloc(strlen(current_phrase)+1);
-			strcpy(new->data, current_phrase);
-			new->entry = size;
-			tree = insert_in_order(tree, new);
-			size++;
-			/* free(new->data);
-			free(new); */
-			strcpy(current_phrase, "");
-			phrase_index = 0;
-			continue;
 
-		}
-
-		current_phrase[phrase_index] = input_file[i];
-		current_phrase[phrase_index + 1] = '\0';
-		new = malloc(sizeof(*new));
-		new->data = current_phrase;
-		locn = search_tree(tree, new);
-		int max_match = 0;
-		if(!locn)
-		{
-			printf("%zu\n", size);
-			new->data = malloc(strlen(current_phrase)+1);
-			strcpy(new->data, current_phrase);
-			new->entry = size;
-			tree = insert_in_order(tree, new);
-			printf("%s%d\n", current_phrase, max_match );
-
-			/* free(new->data);
-			free(new); */
-			size++;
-			strcpy(current_phrase, "");
-			phrase_index = 0;
-
-		}
-		else
-		{
-			max_match = locn->entry;
-			phrase_index++;
-		}
-
-	}
-
+	encode_tree(tree, input_file, size); 
 
 	return 0 ;
-
+	/* Ta-da dictionary done */
 
 }
+
+/****************************************************************/
+
 char
 *get_inputs()
 {
@@ -156,6 +108,9 @@ char
 	input_file[n]='\0';
 	return input_file;
 }
+
+/****************************************************************/
+
 void
 exit_if_null(char *ptr, char *message) 
 {
@@ -165,6 +120,104 @@ exit_if_null(char *ptr, char *message)
 		exit(EXIT_FAILURE);
 	}
 }
+
+/****************************************************************/
+
+int
+string_cmp(void *a, void *b)
+{
+	node_t *x = a, *y = b;
+	if(strcmp(x->data,y->data)>0)
+	{
+		return  1;
+	}
+	else if(strcmp(x->data,y->data)==0)
+	{
+		return  0;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+/****************************************************************/
+
+node_t
+*initialize_first_node(char *current_phrase, int size)
+{
+	node_t *initial; 
+	initial = malloc(sizeof(*initial));
+	assert(initial!=NULL);
+	initial->data = malloc(strlen(current_phrase)+1);
+	assert(initial->data!=NULL);
+	strcpy(initial->data,current_phrase); 
+	initial->entry = size;
+	return initial;
+
+}
+
+/****************************************************************/
+
+void
+encode_tree(tree_t *tree, char *input_file,int size)
+{
+	int i = 0, phrase_index = 0, temp = 0;
+	node_t *new, *locn;
+
+	char *current_phrase; 
+	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
+
+	for(i=0; i<strlen(input_file); i++)
+	{
+		new = malloc(sizeof(*new));
+		current_phrase[phrase_index] = input_file[i];
+		current_phrase[phrase_index + 1] = '\0';
+		new->data = current_phrase;
+		locn = search_tree(tree, new);
+
+		if(!locn)
+		{
+			new->data = malloc(strlen(current_phrase)+1);
+			strcpy(new->data, current_phrase);
+			new->entry = size;
+			tree = insert_in_order(tree, new); 
+			printf("%c%d\n", current_phrase[phrase_index], temp);
+			size++;
+			strcpy(current_phrase, "");
+			phrase_index = 0;
+			temp = 0;
+			continue;
+
+		}
+		else
+		{
+			temp = locn->entry;
+			phrase_index++;
+			if(input_file[i+1] == '\0')
+			{
+				phrase_index++;
+				current_phrase[phrase_index] = '\n';
+				current_phrase[phrase_index+1] = '\0';
+				new->data = malloc(strlen(current_phrase)+1);
+				strcpy(new->data, current_phrase);
+				new->entry = size;
+				tree = insert_in_order(tree, new); 
+				printf("%c%d\n", current_phrase[phrase_index], temp);
+				size++;
+				strcpy(current_phrase, "");
+				phrase_index = 0;
+				temp = 0;
+
+			}
+		}
+	}
+	free_tree(tree);
+	return; 
+}
+
+/****************************************************************/
+
 tree_t
 *make_empty_tree(int func(void*,void*)) 
 {
@@ -178,6 +231,8 @@ tree_t
 	return tree;
 }
 
+/****************************************************************/
+
 int
 is_empty_tree(tree_t *tree) 
 {
@@ -186,6 +241,7 @@ is_empty_tree(tree_t *tree)
 
 }
 
+/****************************************************************/
 
 static void
 *recursive_search_tree(node_t *root,
@@ -201,9 +257,11 @@ static void
 		return recursive_search_tree(root->rght, key, cmp);
 	} else {
 		/* hey, must have found it! */
-		return root; 
+		return root->data; 
 	}
 }
+
+/****************************************************************/
 
 /* Returns a pointer to the tree node storing object "key",
    if it exists, otherwise returns a NULL pointer. */
@@ -215,8 +273,7 @@ void
 } /* The interface function that can be called from the other side it in 
      turn calls the recursive function */
 
-
-
+/****************************************************************/
 
 /* Returns a pointer to an altered tree that now includes
    the object "value" in its correct location. */
@@ -234,6 +291,8 @@ tree_t
 		tree->cmp); /* All three are pointers */
 	return tree;
 }
+
+/****************************************************************/
 
 static node_t
 *recursive_insert(node_t *root, node_t *new,
@@ -253,10 +312,29 @@ static node_t
 	return root;
 }
 
+/****************************************************************/
 
+static void
+recursive_traverse(node_t *root, void action(void*)) {
+	if (root) {
+		recursive_traverse(root->left, action);
+		action(root->data);
+		recursive_traverse(root->rght, action);
+	}
+} 
 
+/****************************************************************/
 
+ /*Applies the "action" at every node in the tree, in
+   the order determined by the cmp function. */
+void
+traverse_tree(tree_t *tree, void action(void*)) 
+{
+	assert(tree!=NULL);
+	recursive_traverse(tree->root, action);
+}
 
+/****************************************************************/
 
 static void
 recursive_free_tree(node_t *root) 
@@ -268,6 +346,8 @@ recursive_free_tree(node_t *root)
 	}
 }
 
+/****************************************************************/
+
 /* Release all memory space associated with the tree
    structure. */
 void
@@ -277,20 +357,11 @@ free_tree(tree_t *tree)
 	recursive_free_tree(tree->root);
 	free(tree);
 }
-int
-string_cmp(void *a, void *b)
-{
-	node_t *x = a, *y = b;
-	if(strcmp(x->data,y->data)>0)
-	{
-		return  1;
-	}
-	else if(strcmp(x->data,y->data)==0)
-	{
-		return  0;
-	}
-	else
-	{
-		return -1;
-	}
-}
+
+/****************************************************************/
+
+
+
+
+
+

@@ -57,16 +57,14 @@ traverse_tree(tree_t *tree, void action(void*)) ;
 int
 main(int argc, char *argv[])
 {
-	char *input_file, *new_input_file;
-	node_t *new, *locn, *max_locn, *initial;
+	char *input_file;
+	node_t *new, *locn, *initial;
 	tree_t *tree;
 	char* current_phrase;
-	int i,j,k;
-	int count = 0;
-	int byte = 0;
-	int length = 1; 
-	int size = 0;
+	int i; 
 	int phrase_index = 0;
+	int temp = 0;
+	int size = 0;
 
 	tree = make_empty_tree(string_cmp);
 
@@ -74,7 +72,6 @@ main(int argc, char *argv[])
 	input_file = get_inputs();
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
 	strcpy(current_phrase,"");
-
 	initial = malloc(sizeof(*new));
 	assert(initial!=NULL);
 	initial->data = malloc(strlen(current_phrase)+1);
@@ -83,25 +80,13 @@ main(int argc, char *argv[])
 	initial->entry = size;
 	size++;
 	tree = insert_in_order(tree, initial);
-	int temp = 0;
-	for(i=0; i<strlen(input_file)-1; i++)
+
+	for(i=0; i<strlen(input_file); i++)
 	{
+		
 
 		new = malloc(sizeof(*new));
 
-		if(input_file[i]=='\n')
-		{
-			new->data = malloc(strlen(current_phrase)+1);
-			strcpy(new->data, current_phrase);
-			new->entry = size;
-			tree = insert_in_order(tree, new);
-			printf("%c%d\n", current_phrase[phrase_index], temp);
-			size++;
-			strcpy(current_phrase, "");
-			phrase_index = 0;
-			temp = 0;
-
-		}
 
 		current_phrase[phrase_index] = input_file[i];
 		current_phrase[phrase_index + 1] = '\0';
@@ -125,8 +110,21 @@ main(int argc, char *argv[])
 		{
 			temp = locn->entry;
 			phrase_index++;
-		}
+			if
+			if(input_file[i+1] == '\n')
+			{
+				new->data = malloc(strlen(current_phrase)+1);
+				strcpy(new->data, current_phrase);
+				new->entry = size;
+				tree = insert_in_order(tree, new); 
+				printf("%c%d\n", current_phrase[phrase_index], temp);
+				size++;
+				strcpy(current_phrase, "");
+				phrase_index = 0;
+				temp = 0;
 
+			}
+		}
 	}
 
 	return 0 ;

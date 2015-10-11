@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "treeops.h"
+#include <strings.h>
+#
 
 
 static void *recursive_search_tree(node_t*, void*,
