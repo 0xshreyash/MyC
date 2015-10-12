@@ -12,4 +12,4 @@ Create time: 10/10/2015
 /****************************************************************/
 //Function Prototypes
 
-void LZ78Compress(const char * const input, const size_t sz_input);
+void LZ78Compress(const char * const input);

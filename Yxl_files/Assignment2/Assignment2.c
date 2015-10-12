@@ -66,7 +66,7 @@ mistake(unintended assignments)
 /****************************************************************/
 //Function Prototypes
 
-size_t Readtext(char ** const text);
+void Readtext(char ** const text);
 
 
 /****************************************************************/
@@ -76,14 +76,11 @@ size_t Readtext(char ** const text);
 int main(void)
 {
     char *input;
-    size_t len_input;
 
-    len_input = Readtext(&input);
+    Readtext(&input);
 
+    LZ78Compress(input);
 
-    LZ78Compress(input, len_input);
-
-    getchar();
     return 0;
 }
 
@@ -93,17 +90,19 @@ int main(void)
 //Read the whole text and store to array
 
 //Return: (size_t) The size of the input string
-__inline__ size_t Readtext(char ** const text)
+__inline__ void Readtext(char ** const text)
 {
     size_t index = 0;
-    size_t sz_nextfetch;
-
+    size_t sz_nextfetch, sz_current_iteration;
+    int i=0;
     sz_nextfetch = SIZE_INPUT_INITIAL;
     *text = (char *)trymalloc(sizeof(char) * SIZE_INPUT_INITIAL);
 
 
     while(fgets((*text) + index, sz_nextfetch, stdin) != NULL)
     {
+        printf("%Iu, %d \n",sz_nextfetch, i++);
+        fflush(stdout);
         if(!IsNullTerminated((*text) + index, sz_nextfetch))
         {
             index += sz_nextfetch;
@@ -112,8 +111,9 @@ __inline__ size_t Readtext(char ** const text)
         }
         else
         {
-            index += strlen((*text) + index);
-            sz_nextfetch = sz_nextfetch - strlen((*text) + index);
+            sz_current_iteration = strlen((*text) + index);
+            index += sz_current_iteration;
+            sz_nextfetch -=  sz_current_iteration;
         }
     }
 
@@ -122,12 +122,10 @@ __inline__ size_t Readtext(char ** const text)
     {
         *text = (char *)tryrealloc(*text, (index + sz_nextfetch + 1) * sizeof(char));
         (*text)[index + sz_nextfetch] = '\0';
-        return index + sz_nextfetch + 1;
     }
     else
     {
         *text = (char *)tryrealloc(*text, strlen(*text) + 1);
-        return strlen(*text) + 1;
     }
 
 }

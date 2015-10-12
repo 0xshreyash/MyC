@@ -23,23 +23,27 @@ mistake(unintended assignments)
 
 //Libraries
 
+#include <string.h>
+#include <stdio.h>
+
 #include "LZ78.h"
 
 /****************************************************************/
 
 //use LZ78 to compress the input string inputted and print out the factors
 
-void LZ78Compress(const char * const input, const size_t sz_input)
+void LZ78Compress(const char * const input)
 {
     size_t index_input = 0;
     size_t index_dictionary_current_node, index_dictionary_previous_node;
+    size_t num_factors = 0;
 
     dictionary_t *dictionary = dictionary_create();
 
     index_dictionary_previous_node = 0;
 
     //process through the whole string except the last character
-    for(index_input = 0; index_input < sz_input - 1; index_input++)
+    for(index_input = 0; index_input < strlen(input) - 1; index_input++)
     {
         if(!(index_dictionary_current_node =
              dictionary_direct_next_node(dictionary, input[index_input]) ))
@@ -50,6 +54,8 @@ void LZ78Compress(const char * const input, const size_t sz_input)
             dictionary_insert(dictionary, input[index_input]);
 
             factor_print(&((factor_t){.ch = input[index_input], .index =index_dictionary_previous_node}));
+            num_factors++;
+
 
             dictionary_reset_current_node(dictionary);
 
@@ -63,8 +69,11 @@ void LZ78Compress(const char * const input, const size_t sz_input)
 
     //Special handling for the last factor
     //For ensuring the last character can be decoded
-    factor_t temp = (factor_t){.ch = input[sz_input], .index = index_dictionary_previous_node};
-    factor_print(&temp);
+    factor_print(&((factor_t){.ch = input[index_input], .index = index_dictionary_previous_node}));
+    num_factors++;
+
+    fprintf(stderr, "encode:%7d bytes input\n", index_input + 1);
+    fprintf(stderr, "encode:%7d factors generated\n", num_factors);
 
 }
 
