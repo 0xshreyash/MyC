@@ -44,6 +44,8 @@ mistake(unintended assignments)
 #define LEN_INPUT_INITIAL 4096
 #define LEN_INPUT_STEP 4096
 
+#define STDIN_BUF_SIZE 3 * 1024 * sizeof(char) //Custom buffer size for stdin
+#define STDOUT_BUF_SIZE 6 * 1024 * sizeof(char) //Custom buffer size for stdout
 
 //Constants
 
@@ -75,6 +77,7 @@ void Readtext(char ** const text);
 int main(void)
 {
     char *input;
+
 
     //To set the buffer size manually to increase performance
     setvbuf(stdin, NULL, _IOFBF, STDIN_BUF_SIZE);
