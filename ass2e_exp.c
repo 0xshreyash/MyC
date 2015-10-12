@@ -1,3 +1,6 @@
+
+/****************************************************************/ 
+                        /* Header Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -6,34 +9,38 @@
 #include <strings.h>
 
 /****************************************************************/
+						 /* #defines */
 
 #define MALLOC_MSG "memory allocation"
 #define REALLOC_MSG "memory reallocation"
 
 /****************************************************************/
-
-
-typedef struct node node_t;
+                    /* Typedef of structures */
+ 
+typedef struct node node_t; /* node_t - Each node of the tree */
 
 struct node 
 {
-	void *data; 
-	int entry;             /* ptr to stored structure */
+	void *data; 			 /* String or phrase stored in the node */
+	int entry;            	 /* Entry or index of each string */	
 	node_t *left;            /* left subtree of node */
 	node_t *rght;            /* right subtree of node */
 };
 
 typedef struct 
 {
-	node_t *root; /* root node of the tree, pointer to the very begining 
-	of the tree */
+	node_t *root;            /* root node of the tree, pointer to the very begining 
+	                          * of the tree */
 	int (*cmp)(void*,void*); /* function pointer, to the comparison function 
-	of the tree */
+	                          * of the tree */
 } tree_t;
 
 /****************************************************************/
 
-/* prototypes for the functions in this library */
+/* prototypes for the functions in this program */
+
+       /*****************************************/
+          /* treeops function declarations */
 
 tree_t *make_empty_tree(int func(void*,void*));
 void *search_tree(tree_t *tree, void *key);
@@ -46,6 +53,10 @@ static node_t *recursive_insert(node_t*, node_t*,
 		int(void*,void*));
 static void recursive_free_tree(node_t*);
 
+       /*****************************************/
+  /* functions made for this program to supplement treeops*/
+
+
 int string_cmp(void *a, void *b);
 char *get_inputs();
 void exit_if_null(char *ptr, char *message); 
@@ -53,7 +64,8 @@ node_t *initialize_first_node(char *current_phrase, int size);
 void encode_tree(tree_t *tree, char *input_file,int size);
 
 /****************************************************************/
-
+/* main function- control centre of the program to creates the tree
+   takes inputs and create the dictionary */
 int
 main(int argc, char *argv[])
 {
@@ -82,7 +94,8 @@ main(int argc, char *argv[])
 }
 
 /****************************************************************/
-
+/* get_inputs- takes inputs from stdin and returns the input file 
+   provided by the user */
 char
 *get_inputs()
 {
@@ -110,7 +123,10 @@ char
 }
 
 /****************************************************************/
-
+/* Function is called if space has been allocated to the string,
+   takes the ptr to the string and relavent error messag as input 
+   arguments and exits program if memory allocation/reallocation
+   is unsuccessful */
 void
 exit_if_null(char *ptr, char *message) 
 {
@@ -122,6 +138,9 @@ exit_if_null(char *ptr, char *message)
 }
 
 /****************************************************************/
+/* The functions takes two void pointers, converts them to a type node_t
+   and then compares the strings associated with the nodes and returs 1 
+   if x->data >  y->data, -1 if x->data < y->data and 0 if they are equal*/
 
 int
 string_cmp(void *a, void *b)
@@ -142,6 +161,9 @@ string_cmp(void *a, void *b)
 }
 
 /****************************************************************/
+/* Function takes the a pointer to the first phrase and size of 
+   as argument and initializes the first node of the tree as a 
+   "" string */
 
 node_t
 *initialize_first_node(char *current_phrase, int size)
@@ -158,7 +180,9 @@ node_t
 }
 
 /****************************************************************/
-
+/* Function takes the tree, input file and the current size of the 
+   tree as arguments and encodes the tree according to the LV78 
+   compression technique */
 void
 encode_tree(tree_t *tree, char *input_file,int size)
 {
@@ -167,8 +191,9 @@ encode_tree(tree_t *tree, char *input_file,int size)
 
 	char *current_phrase; 
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
+	int len = strlen(input_file);
 
-	for(i=0; i<strlen(input_file); i++)
+	for(i=0; i<len; i++)
 	{
 		new = malloc(sizeof(*new));
 		current_phrase[phrase_index] = input_file[i];
@@ -192,17 +217,9 @@ encode_tree(tree_t *tree, char *input_file,int size)
 		}
 		else
 		{
-			temp = locn->entry;
-			phrase_index++;
 			if(input_file[i+1] == '\0')
 			{
-				phrase_index++;
-				current_phrase[phrase_index] = '\n';
-				current_phrase[phrase_index+1] = '\0';
-				new->data = malloc(strlen(current_phrase)+1);
-				strcpy(new->data, current_phrase);
-				new->entry = size;
-				tree = insert_in_order(tree, new); 
+				
 				printf("%c%d\n", current_phrase[phrase_index], temp);
 				size++;
 				strcpy(current_phrase, "");
@@ -210,6 +227,13 @@ encode_tree(tree_t *tree, char *input_file,int size)
 				temp = 0;
 
 			}
+			else
+			{
+				temp = locn->entry;
+				phrase_index++;
+			}
+
+			
 		}
 	}
 	free_tree(tree);
@@ -217,6 +241,7 @@ encode_tree(tree_t *tree, char *input_file,int size)
 }
 
 /****************************************************************/
+         /******* Alistair's treeops module **********/ 
 
 tree_t
 *make_empty_tree(int func(void*,void*)) 
