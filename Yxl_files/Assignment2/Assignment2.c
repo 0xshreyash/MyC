@@ -94,15 +94,15 @@ __inline__ void Readtext(char ** const text)
 {
     size_t index = 0;
     size_t sz_nextfetch, sz_current_iteration;
-    int i=0;
+    //int i=0;
     sz_nextfetch = SIZE_INPUT_INITIAL;
     *text = (char *)trymalloc(sizeof(char) * SIZE_INPUT_INITIAL);
 
 
     while(fgets((*text) + index, sz_nextfetch, stdin) != NULL)
     {
-        printf("%Iu, %d \n",sz_nextfetch, i++);
-        fflush(stdout);
+        //printf("%Iu, %d \n",sz_nextfetch, i++);
+        //fflush(stdout);
         if(!IsNullTerminated((*text) + index, sz_nextfetch))
         {
             index += sz_nextfetch;
