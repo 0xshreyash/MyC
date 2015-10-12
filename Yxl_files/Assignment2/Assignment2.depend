@@ -89,11 +89,12 @@
 	<ctype.h>
 	"yxl_common.h"
 
-1444635796 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
+1444640177 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
 	<stdio.h>
 	<stdlib.h>
 	<limits.h>
 	<string.h>
+	"GlobalSetting.h"
 	"yxl_common.h"
 	"LZ78.h"
 
@@ -133,4 +134,6 @@
 	<stdbool.h>
 	<ctype.h>
 	"yxl_common.h"
+
+1444640009 c:\shares\shreyash\programs\yxl_files\assignment2\globalsetting.h
 

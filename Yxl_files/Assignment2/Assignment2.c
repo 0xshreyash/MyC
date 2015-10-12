@@ -33,6 +33,7 @@ mistake(unintended assignments)
 #include <limits.h>
 #include <string.h>
 
+#include "GlobalSetting.h"
 #include "yxl_common.h" //My custom library
 #include "LZ78.h" //Library for supporting the implementation of LZ78
 
@@ -40,11 +41,9 @@ mistake(unintended assignments)
 //Macros
 
 //Settings
-#define LEN_INPUT_INITIAL 1024
-#define LEN_INPUT_STEP 512
+#define LEN_INPUT_INITIAL 4096
+#define LEN_INPUT_STEP 4096
 
-#define SIZE_FACTORS_INITIAL 128
-#define SIZE_FACTORS_STEP 64
 
 //Constants
 
@@ -77,6 +76,10 @@ int main(void)
 {
     char *input;
 
+    //To set the buffer size manually to increase performance
+    setvbuf(stdin, NULL, _IOFBF, STDIN_BUF_SIZE);
+    setvbuf(stdout, NULL, _IOFBF, STDOUT_BUF_SIZE);
+
     Readtext(&input);
 
     LZ78Compress(input);
@@ -101,11 +104,10 @@ __inline__ void Readtext(char ** const text)
 
     while(fgets((*text) + index, sz_nextfetch, stdin) != NULL)
     {
-        //printf("%Iu, %d \n",sz_nextfetch, i++);
-        //fflush(stdout);
-        if(!IsNullTerminated((*text) + index, sz_nextfetch))
+        if(strlen((*text) + index) == sz_nextfetch - 1)
         {
-            index += sz_nextfetch;
+            //The current array is full, let's realloc
+            index += sz_nextfetch - 1;
             sz_nextfetch = SIZE_INPUT_STEP;
             *text = (char *)tryrealloc(*text, sizeof(char) * (index + SIZE_INPUT_STEP));
         }
@@ -117,16 +119,7 @@ __inline__ void Readtext(char ** const text)
         }
     }
 
-
-    if(!IsNullTerminated(*text, sz_nextfetch))
-    {
-        *text = (char *)tryrealloc(*text, (index + sz_nextfetch + 1) * sizeof(char));
-        (*text)[index + sz_nextfetch] = '\0';
-    }
-    else
-    {
         *text = (char *)tryrealloc(*text, strlen(*text) + 1);
-    }
 
 }
 
