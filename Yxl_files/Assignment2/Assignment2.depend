@@ -44,3 +44,96 @@
 
 1444496800 c:\shares\assignment 2\globalsetting.h
 
+1444622327 source:c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\assignment2.c
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<string.h>
+	"yxl_common.h"
+	"LZ78.h"
+
+1444500169 c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\yxl_common.h
+	<stdlib.h>
+
+1444578426 c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\lz78.h
+	"LZ78Dictionary.h"
+	"LZ78Factor.h"
+
+1444503741 c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\lz78dictionary.h
+	<stdlib.h>
+	<stdbool.h>
+	<limits.h>
+
+1444563614 c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\lz78factor.h
+
+1444621525 source:c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\lz78.c
+	<string.h>
+	<stdio.h>
+	"LZ78.h"
+
+1444503729 source:c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\lz78dictionary.c
+	<stdbool.h>
+	"yxl_common.h"
+	"LZ78Dictionary.h"
+
+1444563610 source:c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\lz78factor.c
+	<stdio.h>
+	<inttypes.h>
+	"LZ78Factor.h"
+
+1444496973 source:c:\users\good\onedrive\文档\shreyash\programs\yxl_files\assignment2\yxl_common.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<stdbool.h>
+	<ctype.h>
+	"yxl_common.h"
+
+1444640177 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
+	<stdio.h>
+	<stdlib.h>
+	<limits.h>
+	<string.h>
+	"GlobalSetting.h"
+	"yxl_common.h"
+	"LZ78.h"
+
+1444500169 c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.h
+	<stdlib.h>
+
+1444578426 c:\shares\shreyash\programs\yxl_files\assignment2\lz78.h
+	"LZ78Dictionary.h"
+	"LZ78Factor.h"
+
+1444503741 c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.h
+	<stdlib.h>
+	<stdbool.h>
+	<limits.h>
+
+1444563614 c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.h
+
+1444621525 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78.c
+	<string.h>
+	<stdio.h>
+	"LZ78.h"
+
+1444503729 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.c
+	<stdbool.h>
+	"yxl_common.h"
+	"LZ78Dictionary.h"
+
+1444563610 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.c
+	<stdio.h>
+	<inttypes.h>
+	"LZ78Factor.h"
+
+1444496973 source:c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<stdbool.h>
+	<ctype.h>
+	"yxl_common.h"
+
+1444640009 c:\shares\shreyash\programs\yxl_files\assignment2\globalsetting.h
+

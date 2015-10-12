@@ -6,4 +6,4 @@ Description: This file provides global setting to
              every module used
 */
 
-#define DEBUG 1
+#define DEBUG 0
