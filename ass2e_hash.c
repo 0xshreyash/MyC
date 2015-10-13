@@ -55,7 +55,7 @@ exit_if_null(char *ptr, char *message);
 hash_table_t
 *create_hash_table(int size);
 int
-table_search(hash_table_t *dict, char *key, int cmp());
+table_search(hash_table_t *dict, char *key);
 hash_table_t
 *table_insert(hash_table_t *dict, char *key, int entry);
 unsigned
@@ -78,26 +78,22 @@ int main(int argc, char* argv[])
 	int htable_size = HTAB_DEFAULT;
 	int size=0;
 	unsigned tabsize = 4;
-	int i, found, phrase_index=0, temp;
+	int i, found, phrase_index = 0, temp = 0;
 	int str_len = strlen(input_file);
 	 
 	current_phrase = malloc(sizeof(char)*(str_len + 1));
 	dict = create_hash_table(htable_size);
 	strcpy(current_phrase,"");	
-
 	dict = table_insert(dict, current_phrase, size);
 	size ++;
 	data_t *new;
-	for(i=0; i<strlen(input_file); i++)
+	for(i=0; input_file[i] !='\0'; i++)
 	{
-
 		current_phrase[phrase_index] = input_file[i];
 		current_phrase[phrase_index + 1] = '\0';
-	
-		found = table_search(dict, current_phrase, string_cmp);
-
-
-		if(!found)
+		found = table_search(dict, current_phrase);
+		printf("found=%d\n", found);
+		if(found == 0)
 		{
 			
 			dict = table_insert(dict, current_phrase, size);
@@ -106,7 +102,7 @@ int main(int argc, char* argv[])
 			strcpy(current_phrase, "");
 			phrase_index = 0;
 			temp = 0;
-			continue;
+			found = 0;
 
 		}
 		else
@@ -124,16 +120,12 @@ int main(int argc, char* argv[])
 			else
 			{
 				temp = found;
+				printf("temp = %d\n", temp);
 				phrase_index++;
 
 			}
 		}
 	}
-
-
-
-
-
 	return 0;	
 }
 /****************************************************************/
@@ -203,7 +195,7 @@ hash_table_t
 }
 /*****************************************************************/
 int
-table_search(hash_table_t *dict, char *key, int cmp())
+table_search(hash_table_t *dict, char *key)
 {
 	int i; 
 	unsigned hash;
@@ -213,8 +205,9 @@ table_search(hash_table_t *dict, char *key, int cmp())
 	for(i=0; i<p->bucket_size; i++)
 	{
 		assert(p->ptrs[i].phrase);
-		if(cmp(key, p->ptrs[i].phrase)==0)
+		if(strcmp(key, p->ptrs[i].phrase)==0)
 		{
+			printf("%s %d\n", key, p->ptrs[i].entry);
 			return p->ptrs[i].entry;
 		}
 
@@ -246,8 +239,9 @@ hash_table_t
 	p->ptrs[p->bucket_size].phrase = malloc(strlen(key)+1);
 	p->ptrs[p->bucket_size].phrase = key;
 	p->ptrs[p->bucket_size].entry = size;
+	printf("Inside Insert %d\n", size);
 	p->bucket_size++;
-	return 0;
+	return dict;
 }
 
 /*******************************************************************/
@@ -337,10 +331,6 @@ hash_func_free(hashfunc_t *h)
 unsigned
 hash_func_calculate(hashfunc_t *h, char *key)
 {
-		printf("%s", key);
-		fflush(stdout);
-
-
 	unsigned i, k=0, hval=0;
 	for(i=0; key[i]!='\0';i++)
 	{
@@ -355,23 +345,5 @@ hash_func_calculate(hashfunc_t *h, char *key)
 }
 
 /*******************************************************************/
-
-int
-string_cmp(void *a, void *b)
-{
-	char *x = a, *y = b;
-	if(strcmp(x,y)>0)
-	{
-		return  1;
-	}
-	else if(strcmp(x, y)==0)
-	{
-		return  0;
-	}
-	else
-	{
-		return -1;
-	}
-}
 
 /*******************************************************************/
