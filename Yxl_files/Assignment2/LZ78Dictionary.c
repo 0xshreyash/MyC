@@ -141,11 +141,9 @@ __inline__ void trie_node_delete(trie_node_t * const trie_node)
     {
         if(trie_node->next[i] != NULL)
             trie_node_delete(trie_node->next[i]);
-
-
-        free(trie_node);
     }
 
+    free(trie_node);
 }
 
 
