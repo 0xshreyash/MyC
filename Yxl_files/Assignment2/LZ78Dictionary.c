@@ -25,6 +25,8 @@ __inline__ is used for function arguments where possible to increase performance
 
 //Libraries
 #include <stdbool.h>
+#include <string.h>
+
 #include "yxl_common.h" //My custom library
 #include "LZ78Dictionary.h"
 
@@ -116,15 +118,12 @@ Return: (dictionary_t *) the pointer to the new dictionary_t data
 
 __inline__ trie_node_t *trie_node_create(const size_t index)
 {
-    size_t i;
     trie_node_t *trie_node = (trie_node_t *)trymalloc(1 * sizeof(trie_node_t));
 
     trie_node->index = index;
 
-    for(i = 0; i < sizeof(trie_node->next)/sizeof(*trie_node->next); i++)
-    {
-        trie_node->next[i] = NULL;
-    }
+    //equivalent to set all elements in the array to NULL pointer
+    memset(trie_node->next,0, sizeof(trie_node->next));
 
     return trie_node;
 }

@@ -46,8 +46,9 @@ __inline__ is used for function arguments where possible to increase performance
 __inline__ void strtolower(const char src[const], char * const dest)
 {
     int i;
+    size_t sz_src = strlen(src);
 
-    for(i=0; i < strlen(src); i++)
+    for(i=0; i < sz_src; i++)
     {
         //tolower handles non-alphabetic characters
         dest[i] = tolower(src[i]);
@@ -64,8 +65,9 @@ __inline__ void strtolower(const char src[const], char * const dest)
 __inline__ void Str_AlphanumericOnly(const char src[const], char * const dest)
 {
     int i = 0, j = 0;
+    size_t len_src = strlen(src);
 
-    while(i < strlen(src))
+    while(i < len_src)
     {
         if(isalnum(src[i]))
         {
@@ -85,7 +87,9 @@ __inline__ void Str_AlphanumericOnly(const char src[const], char * const dest)
 __inline__ int __attribute__((pure)) IsEmpty(const char str[const])
 {
     int i;
-    for(i=0; i < strlen(str); i++)
+    size_t sz_str = strlen(str);
+
+    for(i=0; i < sz_str; i++)
     {
         //checking blank or non-printable characters
         if(str[i] != ' ' && str[i] != '\n' && str[i] != '\t' && str[i] != '\r')
@@ -98,17 +102,17 @@ __inline__ int __attribute__((pure)) IsEmpty(const char str[const])
 /****************************************************************/
 
 //Check whether the char array is null-terminated
-__inline__ int __attribute__((pure))
+__inline__ bool __attribute__((pure))
 IsNullTerminated(const char str[const], const size_t size_str)
 {
-    int i;
+    size_t i;
     for(i=size_str - 1; i >= 0; i--)
     {
         if(str[i] == '\0')
-            return 1;
+            return true;
     }
 
-    return 0;
+    return false;
 }
 
 /****************************************************************/

@@ -38,12 +38,14 @@ void LZ78Compress(const char * const input)
     size_t index_dictionary_current_node, index_dictionary_previous_node;
     size_t num_factors = 0;
 
+    size_t len_input = strlen(input);
+
     dictionary_t *dictionary = dictionary_create();
 
     index_dictionary_previous_node = 0;
 
     //process through the whole string except the last character
-    for(index_input = 0; index_input < strlen(input) - 1; index_input++)
+    for(index_input = 0; index_input < len_input - 1; index_input++)
     {
         if(!(index_dictionary_current_node =
              dictionary_direct_next_node(dictionary, input[index_input]) ))
@@ -72,6 +74,8 @@ void LZ78Compress(const char * const input)
     factor_print(&((factor_t){.ch = input[index_input], .index = index_dictionary_previous_node}));
     num_factors++;
 
+
+    fflush(stdout); //To make sure factors are printed out before the encode information
     fprintf(stderr, "encode:%7d bytes input\n", index_input + 1);
     fprintf(stderr, "encode:%7d factors generated\n", num_factors);
 

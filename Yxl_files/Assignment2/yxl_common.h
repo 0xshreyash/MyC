@@ -5,6 +5,7 @@ Create time: 10/10/2015
 
 //Libraries
 #include <stdlib.h>
+#include <stdbool.h>
 
 /****************************************************************/
 //Macro Definitions
@@ -13,10 +14,10 @@ Create time: 10/10/2015
 /****************************************************************/
 //Function Prototypes
 
-void strtolower(const char src[const], char * const dest);
-void Str_AlphanumericOnly(const char src[const], char * const dest);
-int IsEmpty(const char str[const]);
-int IsNullTerminated(const char str[const], const size_t size_str);
+void strtolower(const char src[], char *dest);
+void Str_AlphanumericOnly(const char src[], char *dest);
+int IsEmpty(const char str[]);
+bool IsNullTerminated(const char str[], size_t size_str);
 void *trymalloc(size_t size_var);
-void *tryrealloc(void * const ptr, size_t size_var);
-void exit_with_error(const char str_err[const]);
+void *tryrealloc(void *ptr, size_t size_var);
+void exit_with_error(const char str_err[]);
