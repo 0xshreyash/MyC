@@ -92,7 +92,6 @@ int main(int argc, char* argv[])
 		current_phrase[phrase_index] = input_file[i];
 		current_phrase[phrase_index + 1] = '\0';
 		found = table_search(dict, current_phrase);
-		printf("found=%d\n", found);
 		if(found == 0)
 		{
 			
@@ -102,8 +101,6 @@ int main(int argc, char* argv[])
 			strcpy(current_phrase, "");
 			phrase_index = 0;
 			temp = 0;
-			found = 0;
-
 		}
 		else
 		{
@@ -120,7 +117,6 @@ int main(int argc, char* argv[])
 			else
 			{
 				temp = found;
-				printf("temp = %d\n", temp);
 				phrase_index++;
 
 			}
@@ -199,7 +195,7 @@ table_search(hash_table_t *dict, char *key)
 {
 	int i; 
 	unsigned hash;
-	hash_bucket_t *p;	
+	hash_bucket_t *p;
 	hash = hash_func_calculate(dict->hash, key);
 	p = dict->buckets + hash; 
 	for(i=0; i<p->bucket_size; i++)
@@ -207,7 +203,6 @@ table_search(hash_table_t *dict, char *key)
 		assert(p->ptrs[i].phrase);
 		if(strcmp(key, p->ptrs[i].phrase)==0)
 		{
-			printf("%s %d\n", key, p->ptrs[i].entry);
 			return p->ptrs[i].entry;
 		}
 
@@ -239,7 +234,6 @@ hash_table_t
 	p->ptrs[p->bucket_size].phrase = malloc(strlen(key)+1);
 	p->ptrs[p->bucket_size].phrase = key;
 	p->ptrs[p->bucket_size].entry = size;
-	printf("Inside Insert %d\n", size);
 	p->bucket_size++;
 	return dict;
 }
@@ -295,7 +289,7 @@ int nextprime(int n)
 	{
 		n = n+1;
 	}
-	return 0;
+	return n;
 }
 /*******************************************************************/
 
