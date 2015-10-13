@@ -131,9 +131,42 @@ __inline__ trie_node_t *trie_node_create(const size_t index)
 
 /****************************************************************/
 
+//Delete the trie tree
+
+__inline__ void trie_node_delete(trie_node_t * const trie_node)
+{
+    size_t i;
+
+    for(i = 0; i < sizeof(trie_node->next)/sizeof(*(trie_node->next)); i++)
+    {
+        if(trie_node->next[i] != NULL)
+            trie_node_delete(trie_node->next[i]);
+
+
+        free(trie_node);
+    }
+
+}
+
+
+/****************************************************************/
+
 //Set current_node to the root of the trie tree
 
 __inline__ void dictionary_reset_current_node(dictionary_t * const dictionary)
 {
     dictionary->current_node = dictionary->root;
+}
+
+
+/****************************************************************/
+
+//Delete the dictionary
+
+__inline__ void dictionary_delete(dictionary_t * const dictionary)
+{
+
+    trie_node_delete(dictionary->root);
+    free(dictionary);
+
 }

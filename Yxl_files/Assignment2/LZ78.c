@@ -75,9 +75,13 @@ void LZ78Compress(const char * const input)
     num_factors++;
 
 
+    dictionary_delete(dictionary);
+
+
     fflush(stdout); //To make sure factors are printed out before the encode information
     fprintf(stderr, "encode:%7d bytes input\n", index_input + 1);
     fprintf(stderr, "encode:%7d factors generated\n", num_factors);
+
 
 }
 

@@ -38,6 +38,7 @@ typedef struct
 
 } dictionary_t;
 
+
 /****************************************************************/
 //Function Prototypes
 
@@ -46,3 +47,4 @@ size_t dictionary_direct_next_node(dictionary_t *dictionary, size_t key);
 dictionary_t *dictionary_create(void);
 trie_node_t *trie_node_create(size_t index);
 void dictionary_reset_current_node(dictionary_t *dictionary);
+void trie_node_delete(trie_node_t * const trie_node);
