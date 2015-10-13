@@ -41,11 +41,11 @@ mistake(unintended assignments)
 //Macros
 
 //Settings
-#define LEN_INPUT_INITIAL 4096
-#define LEN_INPUT_STEP 4096
+#define LEN_INPUT_INITIAL 10 * 1024
+#define LEN_INPUT_STEP 8 * 1024
 
-#define STDIN_BUF_SIZE 3 * 1024 * sizeof(char) //Custom buffer size for stdin
-#define STDOUT_BUF_SIZE 6 * 1024 * sizeof(char) //Custom buffer size for stdout
+#define STDIN_BUF_SIZE 10 * 1024 * sizeof(char) //Custom buffer size for stdin
+#define STDOUT_BUF_SIZE 10 * 1024 * sizeof(char) //Custom buffer size for stdout
 
 //Constants
 
@@ -99,7 +99,7 @@ int main(void)
 __inline__ void Readtext(char ** const text)
 {
     size_t index = 0;
-    size_t sz_nextfetch, sz_current_iteration;
+    size_t sz_nextfetch, len_input_current_iteration;
     //int i=0;
     sz_nextfetch = SIZE_INPUT_INITIAL;
     *text = (char *)trymalloc(sizeof(char) * SIZE_INPUT_INITIAL);
@@ -107,7 +107,9 @@ __inline__ void Readtext(char ** const text)
 
     while(fgets((*text) + index, sz_nextfetch, stdin) != NULL)
     {
-        if(strlen((*text) + index) == sz_nextfetch - 1)
+        len_input_current_iteration = strlen((*text) + index);
+
+        if(len_input_current_iteration == sz_nextfetch - 1)
         {
             //The current array is full, let's realloc
             index += sz_nextfetch - 1;
@@ -116,13 +118,12 @@ __inline__ void Readtext(char ** const text)
         }
         else
         {
-            sz_current_iteration = strlen((*text) + index);
-            index += sz_current_iteration;
-            sz_nextfetch -=  sz_current_iteration;
+            index += len_input_current_iteration;
+            sz_nextfetch -=  len_input_current_iteration;
         }
     }
 
-        *text = (char *)tryrealloc(*text, strlen(*text) + 1);
+        *text = (char *)tryrealloc(*text, index + len_input_current_iteration + 1);
 
 }
 

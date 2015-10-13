@@ -18,4 +18,4 @@ typedef struct
 /****************************************************************/
 //Function Definitions
 
-void factor_print(const factor_t * const factor);
+void factor_print(const factor_t *factor);
