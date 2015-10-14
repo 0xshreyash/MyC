@@ -67,6 +67,7 @@ hashfunc_t
 int nextprime(int n);
 int isprime(int n);
 int string_cmp(void *a, void *b);
+void printf_dict(hash_table_t *dict);
 
 
 
@@ -118,8 +119,9 @@ int main(int argc, char* argv[])
 			{
 				temp = found;
 				phrase_index++;
-
 			}
+			printf("\n\n");
+			printf_dict(dict);
 		}
 	}
 	return 0;	
@@ -339,5 +341,26 @@ hash_func_calculate(hashfunc_t *h, char *key)
 }
 
 /*******************************************************************/
+
+void printf_dict(hash_table_t *dict)
+{
+	int i, j ;
+	hash_bucket_t *p;
+	for(i=0; i<HTAB_DEFAULT; i++)
+	{
+		p = dict->buckets + i;
+		if(p !=NULL)
+		{
+			for(j=0;j<p->bucket_size; j++)
+			{
+				if(strcmp(p->ptrs[j].phrase, "") !=0)
+				{
+					printf("%s %d\n", p->ptrs[i].phrase, p->ptrs[i].entry);
+				}
+			}
+		}
+	}
+	return;
+}
 
 /*******************************************************************/
