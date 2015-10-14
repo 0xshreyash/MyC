@@ -2,8 +2,7 @@
 Author: Xiaoliang Yu
 Create time: 10/10/2015
 
-Description: This file supports the operations related to the
-             factors used by LZ78 algorithm
+Description: This file supports the process related to Factor required by LZ78
 
              *Currently we only support printing out the factor!!!
 
@@ -19,13 +18,14 @@ the current default standard used is gun11
 const is used for function arguments where possible to avoid careless
 mistake(unintended assignments)
 
-__inline__ is used for function arguments where possible to increase performance
+__inline__ is used for function arguments where sensible to increase performance
 */
 
 //Libraries
 #include <stdio.h>
 #include <inttypes.h>
 
+#include "GlobalSetting.h"
 #include "LZ78Factor.h"
 
 
@@ -35,14 +35,15 @@ __inline__ is used for function arguments where possible to increase performance
 
 void factor_print(const factor_t * const factor)
 {
-    //To be compatible with Windows, szie_t will be convert to
+    //To be compatible with Windows (Maybe other OS as well), szie_t will be converted to
     //64 bit unsigned integer
 
+    #if DEBUG
     if(sizeof(size_t) > sizeof(uint_fast64_t))
     {
         puts("Warning: The size of 'size_t' is larger than 'uint_fast64_t', overflow may occur.");
     }
-
+    #endif //DEBUG
 
     printf("%c%"PRIuFAST64"\n", factor->ch, (uint_fast64_t)factor->index);
 }

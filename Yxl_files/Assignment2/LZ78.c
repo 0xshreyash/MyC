@@ -1,11 +1,10 @@
 /*
-
-Comp10002 Assignment 2
-
 Author: Xiaoliang Yu
 Create time: 5/10/2015
 
-Description: This is a compression program using LZ78 compression algorithm
+Description: This files provides the LZ78 compression functionality
+
+             *Specially customized for Comp10002 Assignment 2
 
 
 Special Notes for developer:

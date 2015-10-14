@@ -16,7 +16,7 @@ the current default standard used is gun11
 const is used for function arguments where possible to avoid careless
 mistake(unintended assignments)
 
-__inline__ is used for function arguments where possible to increase performance
+__inline__ is used for function arguments where sensible to increase performance
 */
 
 //Libraries
@@ -118,7 +118,7 @@ IsNullTerminated(const char str[const], const size_t size_str)
 /****************************************************************/
 
 //Try to malloc, if failed, terminate the program
-__inline__ void *trymalloc(size_t size_var)
+__inline__ void __attribute__((malloc)) *trymalloc(const size_t size_var)
 {
     void *mem;
     unsigned int count_trial = 0;
@@ -137,7 +137,7 @@ __inline__ void *trymalloc(size_t size_var)
 /****************************************************************/
 
 //Try to realloc, if failed, terminate the program
-__inline__ void *tryrealloc(void * const ptr, size_t size_var)
+__inline__ void __attribute__((malloc)) *tryrealloc(void * const ptr, const size_t size_var)
 {
     void *mem;
     unsigned int count_trial = 0;
@@ -157,6 +157,7 @@ __inline__ void *tryrealloc(void * const ptr, size_t size_var)
 /****************************************************************/
 
 //output out the error message to stderr and Terminate the execution
+
 __inline__ void exit_with_error(const char str_err[const])
 {
     fprintf(stderr, "FATAL: %s\n",str_err);

@@ -6,4 +6,7 @@ Description: This file provides global setting to
              every module used
 */
 
-#define DEBUG 0
+/****************************************************************/
+//Macros definitions
+
+#define DEBUG 1

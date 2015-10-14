@@ -19,7 +19,7 @@ the current default standard used is gun11
 const is used for function arguments where possible to avoid careless
 mistake(unintended assignments)
 
-__inline__ is used for function arguments where possible to increase performance
+__inline__ is used for function arguments where sensible to increase performance
 */
 
 
@@ -27,6 +27,7 @@ __inline__ is used for function arguments where possible to increase performance
 #include <stdbool.h>
 #include <string.h>
 
+#include "GlobalSetting.h"
 #include "yxl_common.h" //My custom library
 #include "LZ78Dictionary.h"
 
@@ -45,10 +46,13 @@ __inline__ bool dictionary_insert(dictionary_t * const dictionary, const size_t 
 {
 #define NEXT_NODE (dictionary->current_node->next[key])
 
+    #if DEBUG
     if(NEXT_NODE)
     {
+        exit_with_error("NEXT_NODE != NULL In dictionary_insert");
         return false;
     }
+    #endif //DEBUG
 
     NEXT_NODE = trie_node_create(dictionary->num_elements);
 
@@ -92,13 +96,15 @@ __inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary, c
 //Create a new dictionary
 
 /*
-Return: (dictionary_t *) the pointer to the new dictionary_t data
+Return: (dictionary_t *) the pointer to the new dictionary_t variable
 */
 
 __inline__ dictionary_t *dictionary_create(void)
 {
     dictionary_t *dictionary = (dictionary_t *)trymalloc(1 * sizeof(dictionary_t));
 
+
+    //Initialize the dictionary
     dictionary->num_elements = 1;
     dictionary->root = trie_node_create(0);
 
@@ -113,16 +119,18 @@ __inline__ dictionary_t *dictionary_create(void)
 //Create a new trie node
 
 /*
-Return: (dictionary_t *) the pointer to the new dictionary_t data
+Return: (trie_node_t *) the pointer to the new trie_node_t variable
 */
 
 __inline__ trie_node_t *trie_node_create(const size_t index)
 {
     trie_node_t *trie_node = (trie_node_t *)trymalloc(1 * sizeof(trie_node_t));
 
+
+    //Initialize the members of the trie tree
     trie_node->index = index;
 
-    //equivalent to set all elements in the array to NULL pointer
+    //equivalent to set all elements in the array to NULL pointer with better performance
     memset(trie_node->next,0, sizeof(trie_node->next));
 
     return trie_node;
@@ -137,12 +145,14 @@ __inline__ void trie_node_delete(trie_node_t * const trie_node)
 {
     size_t i;
 
+    //Delete all the child notes first
     for(i = 0; i < sizeof(trie_node->next)/sizeof(*(trie_node->next)); i++)
     {
         if(trie_node->next[i] != NULL)
             trie_node_delete(trie_node->next[i]);
     }
 
+    //Finally, it can be freed
     free(trie_node);
 }
 
@@ -164,7 +174,9 @@ __inline__ void dictionary_reset_current_node(dictionary_t * const dictionary)
 __inline__ void dictionary_delete(dictionary_t * const dictionary)
 {
 
+    //Delete the tree first
     trie_node_delete(dictionary->root);
+
     free(dictionary);
 
 }

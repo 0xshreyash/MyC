@@ -89,7 +89,7 @@
 	<ctype.h>
 	"yxl_common.h"
 
-1444671721 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
+1444801844 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
 	<stdio.h>
 	<stdlib.h>
 	<limits.h>
@@ -113,23 +113,25 @@
 
 1444671344 c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.h
 
-1444744884 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78.c
+1444801671 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78.c
 	<string.h>
 	<stdio.h>
 	"LZ78.h"
 
-1444746786 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.c
+1444801894 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.c
 	<stdbool.h>
 	<string.h>
+	"GlobalSetting.h"
 	"yxl_common.h"
 	"LZ78Dictionary.h"
 
-1444563610 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.c
+1444801894 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.c
 	<stdio.h>
 	<inttypes.h>
+	"GlobalSetting.h"
 	"LZ78Factor.h"
 
-1444671564 source:c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.c
+1444801692 source:c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.c
 	<stdlib.h>
 	<stdio.h>
 	<string.h>
@@ -137,5 +139,5 @@
 	<ctype.h>
 	"yxl_common.h"
 
-1444641051 c:\shares\shreyash\programs\yxl_files\assignment2\globalsetting.h
+1444801891 c:\shares\shreyash\programs\yxl_files\assignment2\globalsetting.h
 

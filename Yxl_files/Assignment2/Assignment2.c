@@ -67,7 +67,7 @@ mistake(unintended assignments)
 /****************************************************************/
 //Function Prototypes
 
-void Readtext(char ** const text);
+void Readtext(FILE *fp, char ** const text);
 
 
 /****************************************************************/
@@ -76,16 +76,17 @@ void Readtext(char ** const text);
 
 int main(void)
 {
-    char *input;
-
+    char *input; //The variable stores all the input
 
     //To set the buffer size manually to increase performance
     setvbuf(stdin, NULL, _IOFBF, STDIN_BUF_SIZE);
     setvbuf(stdout, NULL, _IOFBF, STDOUT_BUF_SIZE);
 
-    Readtext(&input);
+    Readtext(stdin, &input); //Get text from stdin
 
     LZ78Compress(input);
+
+    free(input);
 
     return 0;
 }
@@ -96,7 +97,7 @@ int main(void)
 //Read the whole text and store to array
 
 //Return: (size_t) The size of the input string
-__inline__ void Readtext(char ** const text)
+__inline__ void Readtext(FILE *fp, char ** const text)
 {
     size_t index = 0;
     size_t sz_nextfetch, len_input_current_iteration;
@@ -105,7 +106,7 @@ __inline__ void Readtext(char ** const text)
     *text = (char *)trymalloc(sizeof(char) * SIZE_INPUT_INITIAL);
 
 
-    while(fgets((*text) + index, sz_nextfetch, stdin) != NULL)
+    while(fgets((*text) + index, sz_nextfetch, fp) != NULL)
     {
         len_input_current_iteration = strlen((*text) + index);
 
