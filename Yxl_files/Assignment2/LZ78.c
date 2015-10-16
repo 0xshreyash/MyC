@@ -24,6 +24,7 @@ mistake(unintended assignments)
 
 #include <string.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "LZ78.h"
 
@@ -37,9 +38,9 @@ void LZ78Compress(const char * const input)
     size_t index_dictionary_current_node, index_dictionary_previous_node;
     size_t num_factors = 0;
 
-    size_t len_input = strlen(input);
+    const size_t len_input = strlen(input);
 
-    dictionary_t *dictionary = dictionary_create();
+    dictionary_t * const dictionary = dictionary_create();
 
     index_dictionary_previous_node = 0;
 
@@ -54,7 +55,9 @@ void LZ78Compress(const char * const input)
 
             dictionary_insert(dictionary, input[index_input]);
 
-            factor_print(&((factor_t){.ch = input[index_input], .index =index_dictionary_previous_node}));
+            factor_print(&((factor_t){.ch = input[index_input],
+                           .index =index_dictionary_previous_node}));
+
             num_factors++;
 
 
@@ -62,24 +65,34 @@ void LZ78Compress(const char * const input)
 
 
         }
-        else ;//Found a match, continue matching to find the longest matching phrase in dictionary
+        else
+        {
+        //Found a match, continue matching to find the longest matching phrase
+        //in dictionary
+        }
 
         index_dictionary_previous_node = index_dictionary_current_node;
     }
 
 
     //Special handling for the last factor
-    //For ensuring the last character can be decoded
-    factor_print(&((factor_t){.ch = input[index_input], .index = index_dictionary_previous_node}));
+    //For ensuring the last character can be decoded correctly
+    factor_print(&((factor_t){.ch = input[index_input],
+                   .index = index_dictionary_previous_node}));
     num_factors++;
 
 
     dictionary_delete(dictionary);
 
 
-    fflush(stdout); //To make sure factors are printed out before the encode information
-    fprintf(stderr, "encode:%7d bytes input\n", index_input + 1);
-    fprintf(stderr, "encode:%7d factors generated\n", num_factors);
+    //To make sure factors are printed out before the encode information
+    fflush(stdout);
+
+
+    fprintf(stderr, "encode:%7"PRIuFAST64" bytes input\n",
+            (uint_fast64_t)len_input);
+    fprintf(stderr, "encode:%7"PRIuFAST64" factors generated\n",
+            (uint_fast64_t)num_factors);
 
 
 }

@@ -31,17 +31,20 @@ __inline__ is used for function arguments where sensible to increase performance
 
 /****************************************************************/
 
-//To print out the factor following the format specified for COMP10002 assignment 2
+//To print out the factor following the format specified
+//for COMP10002 assignment 2
 
-void factor_print(const factor_t * const factor)
+__inline__ void factor_print(const factor_t * const factor)
 {
-    //To be compatible with Windows (Maybe other OS as well), szie_t will be converted to
+    //To be compatible with Windows (Maybe other OS as well),
+    //size_t will be converted to
     //64 bit unsigned integer
 
     #if DEBUG
     if(sizeof(size_t) > sizeof(uint_fast64_t))
     {
-        puts("Warning: The size of 'size_t' is larger than 'uint_fast64_t', overflow may occur.");
+        puts("Warning: The size of 'size_t' is larger than 'uint_fast64_t', "
+             "overflow may occur.");
     }
     #endif //DEBUG
 
@@ -54,11 +57,14 @@ void factor_print(const factor_t * const factor)
 //Insert factor to the factors array
 
 /*
-__inline__ void factors_insert(factor_t * const *factors, const size_t index_factors, size_t *sz_factor, const char ch, const size_t index)
+__inline__ void factors_insert(factor_t * const *factors,
+                               const size_t index_factors, size_t *sz_factor,
+                               const char ch, const size_t index)
 {
     if(index_factors == *sz_factor)
     {
-        *factors = (factor_t *)tryrealloc((sz_factor + SIZE_FACTORS_STEP) * sizeof(factor_t));
+        *factors = (factor_t *)tryrealloc((sz_factor + SIZE_FACTORS_STEP) *
+                                          sizeof(factor_t));
         *sz_factor = sz_factor + SIZE_FACTORS_STEP;
     }
 

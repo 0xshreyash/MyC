@@ -22,7 +22,7 @@ the current default standard used is gun11
 I used const for function arguments where possible to avoid careless
 mistake(unintended assignments)
 
-
+__inline__ is used for function arguments where sensible to increase performance
 */
 
 /****************************************************************/
@@ -67,7 +67,7 @@ mistake(unintended assignments)
 /****************************************************************/
 //Function Prototypes
 
-void Readtext(FILE *fp, char ** const text);
+void Readtext(FILE *fp, char **text);
 
 
 /****************************************************************/
@@ -77,6 +77,7 @@ void Readtext(FILE *fp, char ** const text);
 int main(void)
 {
     char *input; //The variable stores all the input
+
 
     //To set the buffer size manually to increase performance
     setvbuf(stdin, NULL, _IOFBF, STDIN_BUF_SIZE);
@@ -97,7 +98,7 @@ int main(void)
 //Read the whole text and store to array
 
 //Return: (size_t) The size of the input string
-__inline__ void Readtext(FILE *fp, char ** const text)
+__inline__ void Readtext(FILE * const fp, char ** const text)
 {
     size_t index = 0;
     size_t sz_nextfetch, len_input_current_iteration;
@@ -108,6 +109,9 @@ __inline__ void Readtext(FILE *fp, char ** const text)
 
     while(fgets((*text) + index, sz_nextfetch, fp) != NULL)
     {
+        //The '\0' is expected to be replaced each time of the call to the fgets
+        //(except for the last call)
+
         len_input_current_iteration = strlen((*text) + index);
 
         if(len_input_current_iteration == sz_nextfetch - 1)
@@ -115,7 +119,8 @@ __inline__ void Readtext(FILE *fp, char ** const text)
             //The current array is full, let's realloc
             index += sz_nextfetch - 1;
             sz_nextfetch = SIZE_INPUT_STEP;
-            *text = (char *)tryrealloc(*text, sizeof(char) * (index + SIZE_INPUT_STEP));
+            *text = (char *)tryrealloc(*text, sizeof(char) *
+                                       (index + SIZE_INPUT_STEP));
         }
         else
         {
@@ -124,7 +129,8 @@ __inline__ void Readtext(FILE *fp, char ** const text)
         }
     }
 
-        *text = (char *)tryrealloc(*text, index + len_input_current_iteration + 1);
+        *text = (char *)tryrealloc(*text,
+                                   index + len_input_current_iteration + 1);
 
 }
 

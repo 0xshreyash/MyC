@@ -42,9 +42,10 @@ Return: (bool) True if successful
               False if it's already existent
 */
 
-__inline__ bool dictionary_insert(dictionary_t * const dictionary, const size_t key)
+__inline__ bool dictionary_insert(dictionary_t * const dictionary,
+                                  const size_t index)
 {
-#define NEXT_NODE (dictionary->current_node->next[key])
+#define NEXT_NODE (dictionary->current_node->next[index])
 
     #if DEBUG
     if(NEXT_NODE)
@@ -72,7 +73,8 @@ Return: (size_t) The index of the new current_node
         NULL if the node is not existent
 */
 
-__inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary, const size_t key)
+__inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary,
+                                              const size_t key)
 {
 #define NEXT_NODE (dictionary->current_node->next[key]) //A pointer
 #define CURRENT_NODE (dictionary->current_node) // //A pointer
@@ -94,6 +96,8 @@ __inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary, c
 /****************************************************************/
 
 //Create a new dictionary
+//*The dictionary created by this function should be freed
+//by dictionary_delete later
 
 /*
 Return: (dictionary_t *) the pointer to the new dictionary_t variable
@@ -101,7 +105,8 @@ Return: (dictionary_t *) the pointer to the new dictionary_t variable
 
 __inline__ dictionary_t *dictionary_create(void)
 {
-    dictionary_t *dictionary = (dictionary_t *)trymalloc(1 * sizeof(dictionary_t));
+    dictionary_t * const dictionary =
+            (dictionary_t *)trymalloc(1 * sizeof(dictionary_t));
 
 
     //Initialize the dictionary
@@ -130,7 +135,8 @@ __inline__ trie_node_t *trie_node_create(const size_t index)
     //Initialize the members of the trie tree
     trie_node->index = index;
 
-    //equivalent to set all elements in the array to NULL pointer with better performance
+    //equivalent to set all elements in the array to NULL pointer
+    //with better performance
     memset(trie_node->next,0, sizeof(trie_node->next));
 
     return trie_node;
@@ -174,7 +180,7 @@ __inline__ void dictionary_reset_current_node(dictionary_t * const dictionary)
 __inline__ void dictionary_delete(dictionary_t * const dictionary)
 {
 
-    //Delete the tree first
+    //Delete the nodes first
     trie_node_delete(dictionary->root);
 
     free(dictionary);

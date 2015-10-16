@@ -124,7 +124,8 @@ __inline__ void __attribute__((malloc)) *trymalloc(const size_t size_var)
     unsigned int count_trial = 0;
 
 
-    while(((mem = malloc(size_var)) == NULL) && (count_trial++) <= TRYMALLOC_MAX_TRIAL)
+    while(((mem = malloc(size_var)) == NULL)
+          && (count_trial++) <= TRYMALLOC_MAX_TRIAL)
         ;
 
     if(mem)
@@ -137,13 +138,15 @@ __inline__ void __attribute__((malloc)) *trymalloc(const size_t size_var)
 /****************************************************************/
 
 //Try to realloc, if failed, terminate the program
-__inline__ void __attribute__((malloc)) *tryrealloc(void * const ptr, const size_t size_var)
+__inline__ void __attribute__((malloc)) *tryrealloc(void * const ptr,
+                                                    const size_t size_var)
 {
     void *mem;
     unsigned int count_trial = 0;
 
 
-    while(((mem = realloc(ptr, size_var)) == NULL) && (count_trial++) <= TRYMALLOC_MAX_TRIAL)
+    while(((mem = realloc(ptr, size_var)) == NULL) &&
+           (count_trial++) <= TRYMALLOC_MAX_TRIAL)
         ;
 
     if(mem)
