@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 		current_phrase[phrase_index] = input_file[i];
 		current_phrase[phrase_index + 1] = '\0';
 		found = table_search(dict, current_phrase);
-		if(found == 0)
+		if(!found)
 		{
 			
 			dict = table_insert(dict, current_phrase, size);
@@ -102,6 +102,7 @@ int main(int argc, char* argv[])
 			strcpy(current_phrase, "");
 			phrase_index = 0;
 			temp = 0;
+			continue;
 		}
 		else
 		{
@@ -113,15 +114,15 @@ int main(int argc, char* argv[])
 				strcpy(current_phrase, "");
 				phrase_index = 0;
 				temp = 0;
+				continue;
 
 			}
 			else
 			{
 				temp = found;
 				phrase_index++;
+				continue;
 			}
-			printf("\n\n");
-			printf_dict(dict);
 		}
 	}
 	return 0;	
