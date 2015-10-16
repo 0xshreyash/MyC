@@ -42,7 +42,7 @@ typedef struct
 /****************************************************************/
 //Function Prototypes
 
-bool dictionary_insert(dictionary_t *dictionary, size_t key);
+bool dictionary_insert(dictionary_t *dictionary, size_t index);
 size_t dictionary_direct_next_node(dictionary_t *dictionary, size_t key);
 dictionary_t *dictionary_create(void);
 trie_node_t *trie_node_create(size_t index);
