@@ -1,4 +1,24 @@
-
+/*                   LZ78 Compression Mechanism                 */
+/*     Authorship: Shreyash Patodia, Assignment 2, Comp10002    */
+/*                      Alogrithms are fun                      */
+/* Program that compresses a given text file using the LZ-78
+   compression mechanism in order to compress a given text file. 
+   The LZ78 mechanism works in the following manner:
+   If we have a file containing ab:ab:ab:ab: -> We would get the
+   following encoded dictionary of factors:
+   a0
+   b0
+   :0
+   b1
+   a3
+   :2
+   :4
+   This mechanism becomes more effective as the dict_size of text file
+   increases. 
+   I use binary search dictionarys in order to implement the dictionary
+   structure that stores the factors. The functions implementing 
+   the operations on the dictionary are taken from the material taught
+   in Comp10002 by Alistair Moffat.                             */
 /****************************************************************/ 
                         /* Header Files */
 #include <stdio.h>
@@ -13,45 +33,48 @@
 
 #define MALLOC_MSG "memory allocation"
 #define REALLOC_MSG "memory reallocation"
+/* Messages fthat indicate macclocing and reallocing have been unsuccessful */
 
 /****************************************************************/
                     /* Typedef of structures */
  
-typedef struct node node_t; /* node_t - Each node of the tree */
+typedef struct node node_t;  /* node_t - Each node of the dictionary */
 
 struct node 
 {
 	void *data; 			 /* String or phrase stored in the node */
-	int entry;            	 /* Entry or index of each string */	
-	node_t *left;            /* left subtree of node */
-	node_t *rght;            /* right subtree of node */
+	int entry;            	 /* Entry number of each string into the dictionary */	
+	node_t *left;            /* left subdictionary of node */
+	node_t *rght;            /* right subdictionary of node */
 };
 
 typedef struct 
 {
-	node_t *root;            /* root node of the tree, pointer to the very begining 
-	                          * of the tree */
+	node_t *root;            /* root node of the dictionary, pointer to the very begining 
+	                          * of the dictionary */
 	int (*cmp)(void*,void*); /* function pointer, to the comparison function 
-	                          * of the tree */
-} tree_t;
+	                          * of the dictionary */
+} dictionary_t;
 
 /****************************************************************/
 
-/* prototypes for the functions in this program */
+     /* prototypes for the functions in this program */
 
        /*****************************************/
-          /* treeops function declarations */
+    /* Alistair Moffats's treeops function declarations */
+    /* I have not made any changes apart from changing  */
+		/* tree to dictionary for my program */
 
-tree_t *make_empty_tree(int func(void*,void*));
-void *search_tree(tree_t *tree, void *key);
-tree_t *insert_in_order(tree_t *tree, void *value);
-void free_tree(tree_t *tree);
+dictionary_t *make_empty_dictionary(int func(void*,void*));
+void *search_dictionary(dictionary_t *dictionary, void *key);
+dictionary_t *insert_in_order(dictionary_t *dictionary, void *value);
+void free_dictionary(dictionary_t *dictionary);
 
-static void *recursive_search_tree(node_t*, void*,
+static void *recursive_search_dictionary(node_t*, void*,
 		int(void*,void*));
 static node_t *recursive_insert(node_t*, node_t*,
 		int(void*,void*));
-static void recursive_free_tree(node_t*);
+static void recursive_free_dictionary(node_t*);
 
        /*****************************************/
   /* functions made for this program to supplement treeops*/
@@ -60,33 +83,42 @@ static void recursive_free_tree(node_t*);
 int string_cmp(void *a, void *b);
 char *get_inputs();
 void exit_if_null(char *ptr, char *message); 
-node_t *initialize_first_node(char *current_phrase, int size);
-void encode_tree(tree_t *tree, char *input_file,int size);
+node_t *initialize_first_node(char *current_phrase, int dict_size);
+void encode_dictionary(dictionary_t *dictionary, char *input_file, int dict_size);
+node_t *assign_node_values(char *current_phrase, node_t *new, int dict_size);
 
 /****************************************************************/
-/* main function- control centre of the program to creates the tree
+/* main function- control centre of the program to creates the dictionary
    takes inputs and create the dictionary */
 int
 main(int argc, char *argv[])
 {
-	char *input_file; 
-	node_t *initial; 
-	tree_t *tree;
-	char* current_phrase;
-	int size = 0;
+	char *input_file;          /* Input string from stdin */
+	node_t *initial;           /* First node or root of dictionary tree */
+	dictionary_t *dictionary;  /* Our dictionary of phrases */ 
+	char* current_phrase;      /* phrase being evaluated for match*/
+	int dict_size = 0;			   
 
-	tree = make_empty_tree(string_cmp);
+	dictionary = make_empty_dictionary(string_cmp); /* Making the empty dictionary */
 
 
-	input_file = get_inputs();
+	input_file = get_inputs(); /* Taking input */
+
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
 	strcpy(current_phrase,"");
 
-	initial = initialize_first_node(current_phrase, size);
-	size++;
-	tree = insert_in_order(tree, initial);
+	initial = initialize_first_node(current_phrase, dict_size);
+	/* Initializing first node */
 
-	encode_tree(tree, input_file, size); 
+	dict_size++;
+	dictionary = insert_in_order(dictionary, initial);
+	/* Putting the first node into the dictionary */
+
+	encode_dictionary(dictionary, input_file, dict_size); 
+	/* Carrying out the making of the rest of the dictionary */
+
+	free(current_phrase);
+	free(input_file);
 
 	return 0 ;
 	/* Ta-da dictionary done */
@@ -95,15 +127,15 @@ main(int argc, char *argv[])
 
 /****************************************************************/
 /* get_inputs- takes inputs from stdin and returns the input file 
-   provided by the user */
+   provided by the user in the variable input_file */
 char
 *get_inputs()
 {
-	char *input_file, c;
-	int n = 0, size = 100;
+	char *input_file, c; /* c stores each character as we take input */
+	int n = 0, input_size = 128;
 	
 
-	input_file =  malloc(size);
+	input_file =  malloc(input_size);
 	exit_if_null(input_file,MALLOC_MSG);
 
 	while((c=getchar())!=EOF)
@@ -111,22 +143,26 @@ char
 		
 		input_file[n]=c;
 		n++;
-		if(n == size)
+
+		if(n == input_size) /* Checking if the max length of input_file
+		                       is reached and then doubling size if it
+		                       is */
 		{
 			input_file = realloc(input_file, 2*n);
-			size = 2*n;
+			input_size = 2*n;
 		}
 		
 	}
-	input_file[n]='\0';
+
+	input_file[n]='\0';     /* Inserting null byte at the end */
 	return input_file;
 }
 
 /****************************************************************/
-/* Function is called if space has been allocated to the string,
-   takes the ptr to the string and relavent error messag as input 
-   arguments and exits program if memory allocation/reallocation
-   is unsuccessful */
+/* Function is called to check if space has been allocated to the 
+   string,takes the ptr to the string and relavent error messag 
+   as input arguments and exits program if memory 
+   allocation/reallocation is unsuccessful */
 void
 exit_if_null(char *ptr, char *message) 
 {
@@ -139,8 +175,8 @@ exit_if_null(char *ptr, char *message)
 
 /****************************************************************/
 /* The functions takes two void pointers, converts them to a type node_t
-   and then compares the strings associated with the nodes and returs 1 
-   if x->data >  y->data, -1 if x->data < y->data and 0 if they are equal*/
+   and then compares the strings associated with the nodes and returns 1 
+   if x->data >  y->data, -1 if x->data < y->data and 0 if they are equal */
 
 int
 string_cmp(void *a, void *b)
@@ -161,12 +197,12 @@ string_cmp(void *a, void *b)
 }
 
 /****************************************************************/
-/* Function takes the a pointer to the first phrase and size of 
-   as argument and initializes the first node of the tree as a 
-   "" string */
+/* Function takes the a pointer to the first phrase and dict_size of 
+   as argument and initializes the first node as a "" string 
+   ready to be inserted */
 
 node_t
-*initialize_first_node(char *current_phrase, int size)
+*initialize_first_node(char *current_phrase, int dict_size)
 {
 	node_t *initial; 
 	initial = malloc(sizeof(*initial));
@@ -174,24 +210,27 @@ node_t
 	initial->data = malloc(strlen(current_phrase)+1);
 	assert(initial->data!=NULL);
 	strcpy(initial->data,current_phrase); 
-	initial->entry = size;
+	initial->entry = dict_size;
 	return initial;
 
 }
 
 /****************************************************************/
-/* Function takes the tree, input file and the current size of the 
-   tree as arguments and encodes the tree according to the LV78 
+/* Function takes the dictionary, input file and the current dict_size of the 
+   dictionary as arguments and encodes the dictionary according to the LV78 
    compression technique */
 void
-encode_tree(tree_t *tree, char *input_file,int size)
+encode_dictionary(dictionary_t *dictionary, char *input_file,int dict_size)
 {
-	int i = 0, phrase_index = 0, temp = 0;
-	node_t *new, *locn;
+	int i = 0, phrase_index = 0, max_match = 0, len = strlen(input_file);
 
+	node_t *new, *locn;
+	/* max_match is the position or entry number of the longest phrase
+	   that the current_phrase matches with */
+	/* locn is a pointer to the node with the longest string match
+	   of the current_phrase */
 	char *current_phrase; 
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
-	int len = strlen(input_file);
 
 	for(i=0; i<len; i++)
 	{
@@ -199,77 +238,92 @@ encode_tree(tree_t *tree, char *input_file,int size)
 		current_phrase[phrase_index] = input_file[i];
 		current_phrase[phrase_index + 1] = '\0';
 		new->data = current_phrase;
-		locn = search_tree(tree, new);
+		locn = search_dictionary(dictionary, new); /* Searching dictionary */
 
-		if(!locn)
+		if(!locn) /* If no match found insert  current_phrase */
 		{
-			new->data = malloc(strlen(current_phrase)+1);
-			strcpy(new->data, current_phrase);
-			new->entry = size;
-			tree = insert_in_order(tree, new); 
-			printf("%c%d\n", current_phrase[phrase_index], temp);
-			size++;
+			new = assign_node_values(current_phrase, new, dict_size);
+			dictionary = insert_in_order(dictionary, new); 
+			printf("%c%d\n", current_phrase[phrase_index], max_match);
+			dict_size++;
 			strcpy(current_phrase, "");
 			phrase_index = 0;
-			temp = 0;
-			continue;
+			max_match = 0;
 
 		}
 		else
 		{
-			if(input_file[i+1] == '\0')
+			if(input_file[i+1] == '\0')/* If a match is found but the next 
+										  element is a null in the string then
+										  don't look for a bigger match than the
+										  match with the penultimate element */
 			{
-				
-				printf("%c%d\n", current_phrase[phrase_index], temp);
-				size++;
+	
+				printf("%c%d\n", current_phrase[phrase_index], max_match);
+				dict_size++;
 				strcpy(current_phrase, "");
 				phrase_index = 0;
-				temp = 0;
+				max_match = 0;
 
 			}
-			else
+			else /* else the entry of locn is the largest match */
 			{
-				temp = locn->entry;
+				max_match = locn->entry;
 				phrase_index++;
-			}
-
 			
+			}	
 		}
 	}
-	free_tree(tree);
+
+	free_dictionary(dictionary);
+	free(current_phrase);
 	return; 
+}
+
+/****************************************************************/
+/* Function that assigns to node_t new the current_phrase and the
+   size of the dictionary. Input arguments are the node_t new, 
+   current_phrase and the dictionary size. Output is the prepared
+   node */
+node_t
+*assign_node_values(char *current_phrase, node_t *new, int dict_size)
+{
+	new->data = malloc(strlen(current_phrase)+1);
+	strcpy(new->data, current_phrase);
+	new->entry = dict_size;
+	return new;
 }
 
 /****************************************************************/
          /******* Alistair's treeops module **********/ 
 
-tree_t
-*make_empty_tree(int func(void*,void*)) 
+dictionary_t
+*make_empty_dictionary(int func(void*,void*)) 
 {
-	tree_t *tree;
-	tree = malloc(sizeof(*tree));
-	assert(tree!=NULL);
-	/* initialize tree to empty */
-	tree->root = NULL;
+	dictionary_t *dictionary;
+	dictionary = malloc(sizeof(*dictionary));
+	assert(dictionary!=NULL);
+	/* initialize dictionary to empty */
+	dictionary->root = NULL;
 	/* and save the supplied function pointer */
-	tree->cmp = func;    /* Into the cmp field of the the tree */     
-	return tree;
+	dictionary->cmp = func;    /* Into the cmp field of the the dictionary */     
+	return dictionary;
 }
 
 /****************************************************************/
 
 int
-is_empty_tree(tree_t *tree) 
+is_empty_dictionary(dictionary_t *dictionary) 
 {
-	assert(tree!=NULL);
-	return tree->root==NULL;
+	assert(dictionary!=NULL);
+	return dictionary->root==NULL;
 
 }
 
 /****************************************************************/
 
 static void
-*recursive_search_tree(node_t *root,
+*recursive_search_dictionary(node_t *root,
 		void *key, int cmp(void*,void*)) 
 {
 	int outcome;
@@ -277,9 +331,9 @@ static void
 		return NULL; /* Return null if there is no root */
 	}
 	if ((outcome=cmp(key, root->data)) < 0) {
-		return recursive_search_tree(root->left, key, cmp);
+		return recursive_search_dictionary(root->left, key, cmp);
 	} else if (outcome > 0) {
-		return recursive_search_tree(root->rght, key, cmp);
+		return recursive_search_dictionary(root->rght, key, cmp);
 	} else {
 		/* hey, must have found it! */
 		return root->data; 
@@ -288,33 +342,33 @@ static void
 
 /****************************************************************/
 
-/* Returns a pointer to the tree node storing object "key",
+/* Returns a pointer to the dictionary node storing object "key",
    if it exists, otherwise returns a NULL pointer. */
 void
-*search_tree(tree_t *tree, void *key) 
+*search_dictionary(dictionary_t *dictionary, void *key) 
 {
-	assert(tree!=NULL);
-	return recursive_search_tree(tree->root, key, tree->cmp);
+	assert(dictionary!=NULL);
+	return recursive_search_dictionary(dictionary->root, key, dictionary->cmp);
 } /* The interface function that can be called from the other side it in 
      turn calls the recursive function */
 
 /****************************************************************/
 
-/* Returns a pointer to an altered tree that now includes
+/* Returns a pointer to an altered dictionary that now includes
    the object "value" in its correct location. */
-tree_t
-*insert_in_order(tree_t *tree, void *value) 
+dictionary_t
+*insert_in_order(dictionary_t *dictionary, void *value) 
 {
 	node_t *new;
 	/* make the new node */
 	new = malloc(sizeof(*new));
-	assert(tree!=NULL && new!=NULL);
+	assert(dictionary!=NULL && new!=NULL);
 	new->data = value;
 	new->left = new->rght = NULL; /* Multiple assignment statements together */
-	/* and insert it into the tree */
-	tree->root = recursive_insert(tree->root, new,
-		tree->cmp); /* All three are pointers */
-	return tree;
+	/* and insert it into the dictionary */
+	dictionary->root = recursive_insert(dictionary->root, new,
+		dictionary->cmp); /* All three are pointers */
+	return dictionary;
 }
 
 /****************************************************************/
@@ -350,37 +404,37 @@ recursive_traverse(node_t *root, void action(void*)) {
 
 /****************************************************************/
 
- /*Applies the "action" at every node in the tree, in
+ /*Applies the "action" at every node in the dictionary, in
    the order determined by the cmp function. */
 void
-traverse_tree(tree_t *tree, void action(void*)) 
+traverse_dictionary(dictionary_t *dictionary, void action(void*)) 
 {
-	assert(tree!=NULL);
-	recursive_traverse(tree->root, action);
+	assert(dictionary!=NULL);
+	recursive_traverse(dictionary->root, action);
 }
 
 /****************************************************************/
 
 static void
-recursive_free_tree(node_t *root) 
+recursive_free_dictionary(node_t *root) 
 {
 	if (root) {
-		recursive_free_tree(root->left);
-		recursive_free_tree(root->rght);
+		recursive_free_dictionary(root->left);
+		recursive_free_dictionary(root->rght);
 		free(root);
 	}
 }
 
 /****************************************************************/
 
-/* Release all memory space associated with the tree
+/* Release all memory space associated with the dictionary
    structure. */
 void
-free_tree(tree_t *tree) 
+free_dictionary(dictionary_t *dictionary) 
 {
-	assert(tree!=NULL);
-	recursive_free_tree(tree->root);
-	free(tree);
+	assert(dictionary!=NULL);
+	recursive_free_dictionary(dictionary->root);
+	free(dictionary);
 }
 
 /****************************************************************/
