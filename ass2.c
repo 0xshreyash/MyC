@@ -191,8 +191,9 @@ encode_tree(tree_t *tree, char *input_file,int size)
 
 	char *current_phrase; 
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
+	int len = strlen(input_file);
 
-	for(i=0; i<strlen(input_file); i++)
+	for(i=0; i<len; i++)
 	{
 		new = malloc(sizeof(*new));
 		current_phrase[phrase_index] = input_file[i];
@@ -216,17 +217,9 @@ encode_tree(tree_t *tree, char *input_file,int size)
 		}
 		else
 		{
-			temp = locn->entry;
-			phrase_index++;
 			if(input_file[i+1] == '\0')
 			{
-				phrase_index++;
-				current_phrase[phrase_index] = '\n';
-				current_phrase[phrase_index+1] = '\0';
-				new->data = malloc(strlen(current_phrase)+1);
-				strcpy(new->data, current_phrase);
-				new->entry = size;
-				tree = insert_in_order(tree, new); 
+				
 				printf("%c%d\n", current_phrase[phrase_index], temp);
 				size++;
 				strcpy(current_phrase, "");
@@ -234,6 +227,15 @@ encode_tree(tree_t *tree, char *input_file,int size)
 				temp = 0;
 
 			}
+
+
+			else
+			{
+				temp = locn->entry;
+				phrase_index++;
+			}
+
+			
 		}
 	}
 	free_tree(tree);
