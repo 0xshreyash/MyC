@@ -98,7 +98,7 @@ int main(void)
 //Read the whole text and store to array
 
 //Return: (size_t) The size of the input string
-__inline__ void Readtext(FILE * const fp, char ** const text)
+void Readtext(FILE * const fp, char ** const text)
 {
     size_t index = 0;
     size_t sz_nextfetch, len_input_current_iteration;

@@ -161,7 +161,7 @@ __inline__ void __attribute__((malloc)) *tryrealloc(void * const ptr,
 
 //output out the error message to stderr and Terminate the execution
 
-__inline__ void exit_with_error(const char str_err[const])
+void exit_with_error(const char str_err[const])
 {
     fprintf(stderr, "FATAL: %s\n",str_err);
     exit(EXIT_FAILURE);
