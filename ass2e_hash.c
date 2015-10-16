@@ -232,10 +232,10 @@ hash_table_t
 		p->bucket_limit *= p->bucket_size;
 		p->ptrs = realloc(p->ptrs, p->bucket_limit*sizeof(data_t));
 		assert(p->ptrs);
-		p->ptrs->phrase = malloc(strlen(key)+1);
+		//p->ptrs->phrase = malloc(strlen(key)+1);
 	}
 	p->ptrs[p->bucket_size].phrase = malloc(strlen(key)+1);
-	p->ptrs[p->bucket_size].phrase = key;
+	strncpy(p->ptrs[p->bucket_size].phrase, key, strlen(key) + 1);
 	p->ptrs[p->bucket_size].entry = size;
 	p->bucket_size++;
 	return dict;
