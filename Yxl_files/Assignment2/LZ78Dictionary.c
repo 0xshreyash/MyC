@@ -150,9 +150,10 @@ __inline__ trie_node_t *trie_node_create(const size_t index)
 __inline__ void trie_node_delete(trie_node_t * const trie_node)
 {
     size_t i;
-    const size_t num_elements = sizeof(trie_node->next)/sizeof(*(trie_node->next);
+    const size_t num_elements = (sizeof(trie_node->next) /
+                                 sizeof(*(trie_node->next)));
     //Delete all the child notes first
-    for(i = 0; i < num_elements); i++)
+    for(i = 0; i < num_elements; i++)
     {
         if(trie_node->next[i] != NULL)
             trie_node_delete(trie_node->next[i]);
