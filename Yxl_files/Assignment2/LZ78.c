@@ -40,7 +40,10 @@ void LZ78Compress(const char * const input)
 
     const size_t len_input = strlen(input);
 
+
+    //Create the dictionary
     dictionary_t * const dictionary = dictionary_create();
+
 
     index_dictionary_previous_node = 0;
 
@@ -88,7 +91,7 @@ void LZ78Compress(const char * const input)
     //To make sure factors are printed out before the encode information
     fflush(stdout);
 
-
+    //Encode information
     fprintf(stderr, "encode:%7"PRIuFAST64" bytes input\n",
             (uint_fast64_t)len_input);
     fprintf(stderr, "encode:%7"PRIuFAST64" factors generated\n",

@@ -39,7 +39,7 @@ __inline__ is used for function arguments where sensible to increase performance
 
 /*
 Return: (bool) True if successful
-              False if it's already existent
+              False if it's already existent (only available when DEBUG is on)
 */
 
 __inline__ bool dictionary_insert(dictionary_t * const dictionary,
@@ -70,7 +70,7 @@ __inline__ bool dictionary_insert(dictionary_t * const dictionary,
 
 /*
 Return: (size_t) The index of the new current_node
-        NULL if the node is not existent
+        0 if the node is not existent
 */
 
 __inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary,
@@ -79,6 +79,8 @@ __inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary,
 #define NEXT_NODE (dictionary->current_node->next[key]) //A pointer
 #define CURRENT_NODE (dictionary->current_node) // //A pointer
 
+//This implementation is deprecated
+/*
     if(NEXT_NODE)
     {
         CURRENT_NODE = NEXT_NODE;
@@ -86,7 +88,13 @@ __inline__ size_t dictionary_direct_next_node(dictionary_t * const dictionary,
     }
     else
         return false;
+*/
 
+//New implementation with better performance
+CURRENT_NODE = (trie_node_t *)((NEXT_NODE == NULL) * (int)CURRENT_NODE +
+                (NEXT_NODE != NULL) * (int)NEXT_NODE);
+
+return (NEXT_NODE != NULL) * CURRENT_NODE->index;
 
 #undef NEXT_NODE
 #undef CURRENT_NODE
