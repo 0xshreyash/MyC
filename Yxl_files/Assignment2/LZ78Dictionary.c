@@ -155,8 +155,7 @@ __inline__ void trie_node_delete(trie_node_t * const trie_node)
     //Delete all the child notes first
     for(i = 0; i < num_elements; i++)
     {
-        if(trie_node->next[i] != NULL)
-            trie_node_delete(trie_node->next[i]);
+        (trie_node->next[i] != NULL) && trie_node_delete(trie_node->next[i]);
     }
 
     //Finally, it can be freed
