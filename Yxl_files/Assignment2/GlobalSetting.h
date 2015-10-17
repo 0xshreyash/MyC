@@ -9,4 +9,4 @@ Description: This file provides global setting to
 /****************************************************************/
 //Macros definitions
 
-#define DEBUG 1
+#define DEBUG 0

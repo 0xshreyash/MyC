@@ -78,7 +78,6 @@ int main(void)
 {
     char *input; //The variable stores all the input
 
-
     //To set the buffer size manually to increase performance
     setvbuf(stdin, NULL, _IOFBF, STDIN_BUF_SIZE);
     setvbuf(stdout, NULL, _IOFBF, STDOUT_BUF_SIZE);
@@ -87,6 +86,7 @@ int main(void)
 
     LZ78Compress(input);
 
+    //Cleaning...
     free(input);
 
     return 0;
@@ -129,6 +129,7 @@ void Readtext(FILE * const fp, char ** const text)
         }
     }
 
+        //To save memory space
         *text = (char *)tryrealloc(*text,
                                    index + len_input_current_iteration + 1);
 

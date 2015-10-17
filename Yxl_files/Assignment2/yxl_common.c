@@ -101,7 +101,7 @@ __inline__ int __attribute__((pure)) IsEmpty(const char str[const])
 
 /****************************************************************/
 
-//Check whether the char array is null-terminated
+//Check whether the char array is null-terminated (string)
 __inline__ bool __attribute__((pure))
 IsNullTerminated(const char str[const], const size_t size_str)
 {
