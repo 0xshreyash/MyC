@@ -89,7 +89,7 @@
 	<ctype.h>
 	"yxl_common.h"
 
-1444801844 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
+1445018929 source:c:\shares\shreyash\programs\yxl_files\assignment2\assignment2.c
 	<stdio.h>
 	<stdlib.h>
 	<limits.h>
@@ -98,40 +98,41 @@
 	"yxl_common.h"
 	"LZ78.h"
 
-1444671294 c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.h
+1444990589 c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.h
 	<stdlib.h>
 	<stdbool.h>
 
-1444578426 c:\shares\shreyash\programs\yxl_files\assignment2\lz78.h
+1444990782 c:\shares\shreyash\programs\yxl_files\assignment2\lz78.h
 	"LZ78Dictionary.h"
 	"LZ78Factor.h"
 
-1444746820 c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.h
+1445011954 c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.h
 	<stdlib.h>
 	<stdbool.h>
 	<limits.h>
 
-1444671344 c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.h
+1444990803 c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.h
 
-1444801671 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78.c
+1445082138 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78.c
 	<string.h>
 	<stdio.h>
+	<inttypes.h>
 	"LZ78.h"
 
-1444801894 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.c
+1445085434 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78dictionary.c
 	<stdbool.h>
 	<string.h>
 	"GlobalSetting.h"
 	"yxl_common.h"
 	"LZ78Dictionary.h"
 
-1444801894 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.c
+1445011954 source:c:\shares\shreyash\programs\yxl_files\assignment2\lz78factor.c
 	<stdio.h>
 	<inttypes.h>
 	"GlobalSetting.h"
 	"LZ78Factor.h"
 
-1444801692 source:c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.c
+1445086133 source:c:\shares\shreyash\programs\yxl_files\assignment2\yxl_common.c
 	<stdlib.h>
 	<stdio.h>
 	<string.h>
@@ -139,5 +140,5 @@
 	<ctype.h>
 	"yxl_common.h"
 
-1444801891 c:\shares\shreyash\programs\yxl_files\assignment2\globalsetting.h
+1445086477 c:\shares\shreyash\programs\yxl_files\assignment2\globalsetting.h
 
