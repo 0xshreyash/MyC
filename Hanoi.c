@@ -10,7 +10,7 @@ int
 main(int argc,char* argv[])
 {
 	int n;
-	printf("Here we attempt to solve the towers of hanoi ");
+	printf("Here we attempt to solve the towers of hanoi\n");
 	printf("\nPlease enter the value of n for which the towers of hanoi are to be calculated\n");
 	scanf("%d",&n);
 	hanoi('A','B','C',n);
@@ -24,11 +24,12 @@ hanoi(char from,char via,char to,int n)
 		return ;
 	}
 	hanoi(from,to,via,n-1);
+
 	for(i=1;i<n;i++)
 	{
-		printf(" ");
+		printf("   ");
 	}
-	printf("\nMove from %c to %c\n",from,to);
+	printf("Move from %c to %c\n",from,to);
 	hanoi(via,from,to,n-1);
 }
 	

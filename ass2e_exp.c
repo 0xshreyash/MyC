@@ -1,8 +1,9 @@
 /*                   LZ78 Compression Mechanism                 */
 /*     Authorship: Shreyash Patodia, Assignment 2, Comp10002    */
-/*                      Alogrithms are fun                      */
+/*                      (Alogrithms are fun)                    */
 /* Program that compresses a given text file using the LZ-78
-   compression mechanism in order to compress a given text file. 
+   compression mechanism in order to save space
+   involved in storing a given text file. 
    The LZ78 mechanism works in the following manner:
    If we have a file containing ab:ab:ab:ab: -> We would get the
    following encoded dictionary of factors:
@@ -13,12 +14,12 @@
    a3
    :2
    :4
-   This mechanism becomes more effective as the dict_size of text file
+   This mechanism becomes more effective as the size of text file
    increases. 
-   I use binary search dictionarys in order to implement the dictionary
+   I use binary search trees in order to implement the dictionary
    structure that stores the factors. The functions implementing 
    the operations on the dictionary are taken from the material taught
-   in Comp10002 by Alistair Moffat.                             */
+   in Comp10002 by Alistair Moffat(Semseter 2, 2015)            */
 /****************************************************************/ 
                         /* Header Files */
 #include <stdio.h>
@@ -29,11 +30,14 @@
 #include <strings.h>
 
 /****************************************************************/
-						 /* #defines */
+                          /* #defines */
 
 #define MALLOC_MSG "memory allocation"
 #define REALLOC_MSG "memory reallocation"
-/* Messages fthat indicate macclocing and reallocing have been unsuccessful */
+/* Messages that indicate macclocing and reallocing have 
+ * been unsuccessful */
+#define INITIAL_INPUT_SIZE 128
+/* Initial size of the variable assigned to take input */   
 
 /****************************************************************/
                     /* Typedef of structures */
@@ -42,17 +46,20 @@ typedef struct node node_t;  /* node_t - Each node of the dictionary */
 
 struct node 
 {
-	void *data; 			 /* String or phrase stored in the node */
-	int entry;            	 /* Entry number of each string into the dictionary */	
+	void *data; 	         /* String or phrase stored in the node */
+	int entry;            	 /* Entry number of each string into 
+							  * the dictionary */	
 	node_t *left;            /* left subdictionary of node */
 	node_t *rght;            /* right subdictionary of node */
 };
 
 typedef struct 
 {
-	node_t *root;            /* root node of the dictionary, pointer to the very begining 
+	node_t *root;            /* root node of the dictionary, 
+                              * pointer to the very begining 
 	                          * of the dictionary */
-	int (*cmp)(void*,void*); /* function pointer, to the comparison function 
+	int (*cmp)(void*,void*); /* function pointer, 
+                              * to the comparison function 
 	                          * of the dictionary */
 } dictionary_t;
 
@@ -63,9 +70,10 @@ typedef struct
        /*****************************************/
     /* Alistair Moffats's treeops function declarations */
     /* I have not made any changes apart from changing  */
-		/* tree to dictionary for my program */
+           /* tree to dictionary for my program */
 
 dictionary_t *make_empty_dictionary(int func(void*,void*));
+
 void *search_dictionary(dictionary_t *dictionary, void *key);
 dictionary_t *insert_in_order(dictionary_t *dictionary, void *value);
 void free_dictionary(dictionary_t *dictionary);
@@ -77,15 +85,18 @@ static node_t *recursive_insert(node_t*, node_t*,
 static void recursive_free_dictionary(node_t*);
 
        /*****************************************/
-  /* functions made for this program to supplement treeops*/
+  /* functions made for this program to supplement treeops */
 
-
-int string_cmp(void *a, void *b);
 char *get_inputs();
 void exit_if_null(char *ptr, char *message); 
+
 node_t *initialize_first_node(char *current_phrase, int dict_size);
-void encode_dictionary(dictionary_t *dictionary, char *input_file, int dict_size);
-node_t *assign_node_values(char *current_phrase, node_t *new, int dict_size);
+node_t *assign_node_values(char *current_phrase, node_t *new, 
+	                       int dict_size);
+
+void encode_dictionary(dictionary_t *dictionary, char *input_file, 
+	                   int dict_size);
+int string_cmp(void *a, void *b);
 
 /****************************************************************/
 /* main function- control centre of the program to creates the dictionary
@@ -96,18 +107,19 @@ main(int argc, char *argv[])
 	char *input_file;          /* Input string from stdin */
 	node_t *initial;           /* First node or root of dictionary tree */
 	dictionary_t *dictionary;  /* Our dictionary of phrases */ 
-	char* current_phrase;      /* phrase being evaluated for match*/
-	int dict_size = 0;			   
+	char* first_phrase;        /* phrase being evaluated for match*/
+	int dict_size = 0;		   /* dictionary size */  
 
-	dictionary = make_empty_dictionary(string_cmp); /* Making the empty dictionary */
+	dictionary = make_empty_dictionary(string_cmp); 
+	/* Making the empty dictionary */
 
 
 	input_file = get_inputs(); /* Taking input */
 
-	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
-	strcpy(current_phrase,"");
+	first_phrase = malloc((strlen(input_file)+1)*sizeof(char));
+	strcpy(first_phrase,"");
 
-	initial = initialize_first_node(current_phrase, dict_size);
+	initial = initialize_first_node(first_phrase, dict_size);
 	/* Initializing first node */
 
 	dict_size++;
@@ -117,7 +129,8 @@ main(int argc, char *argv[])
 	encode_dictionary(dictionary, input_file, dict_size); 
 	/* Carrying out the making of the rest of the dictionary */
 
-	free(current_phrase);
+	free_dictionary(dictionary);
+	free(first_phrase);
 	free(input_file);
 
 	return 0 ;
@@ -132,7 +145,7 @@ char
 *get_inputs()
 {
 	char *input_file, c; /* c stores each character as we take input */
-	int n = 0, input_size = 128;
+	int n = 0, input_size = INITIAL_INPUT_SIZE;
 	
 
 	input_file =  malloc(input_size);
@@ -160,7 +173,7 @@ char
 
 /****************************************************************/
 /* Function is called to check if space has been allocated to the 
-   string,takes the ptr to the string and relavent error messag 
+   string,takes the ptr to the string and relavent error message 
    as input arguments and exits program if memory 
    allocation/reallocation is unsuccessful */
 void
@@ -171,29 +184,21 @@ exit_if_null(char *ptr, char *message)
 		printf("Unexpected null pointer encountered during: %s\n", message);
 		exit(EXIT_FAILURE);
 	}
+
+	return;
 }
 
 /****************************************************************/
 /* The functions takes two void pointers, converts them to a type node_t
-   and then compares the strings associated with the nodes and returns 1 
-   if x->data >  y->data, -1 if x->data < y->data and 0 if they are equal */
+   and then compares the strings associated with the nodes and returns the
+   strcmp value of x->data, y->data */
 
 int
 string_cmp(void *a, void *b)
 {
 	node_t *x = a, *y = b;
-	if(strcmp(x->data,y->data)>0)
-	{
-		return  1;
-	}
-	else if(strcmp(x->data,y->data)==0)
-	{
-		return  0;
-	}
-	else
-	{
-		return -1;
-	}
+
+	return strcmp(x->data,y->data);
 }
 
 /****************************************************************/
@@ -202,33 +207,38 @@ string_cmp(void *a, void *b)
    ready to be inserted */
 
 node_t
-*initialize_first_node(char *current_phrase, int dict_size)
+*initialize_first_node(char *first_phrase, int dict_size)
 {
 	node_t *initial; 
 	initial = malloc(sizeof(*initial));
 	assert(initial!=NULL);
-	initial->data = malloc(strlen(current_phrase)+1);
+
+	initial->data = malloc(strlen(first_phrase)+1);
 	assert(initial->data!=NULL);
-	strcpy(initial->data,current_phrase); 
+
+	strcpy(initial->data, first_phrase); 
 	initial->entry = dict_size;
 	return initial;
 
 }
 
 /****************************************************************/
-/* Function takes the dictionary, input file and the current dict_size of the 
+/* Function takes the dictionary, input file and the current size of the 
    dictionary as arguments and encodes the dictionary according to the LV78 
    compression technique */
+/* P.S. - The function is only 30 odd statements it looks big because of the
+   spaces and large comments */   
 void
-encode_dictionary(dictionary_t *dictionary, char *input_file,int dict_size)
+encode_dictionary(dictionary_t *dictionary, char *input_file, int dict_size)
 {
 	int i = 0, phrase_index = 0, max_match = 0, len = strlen(input_file);
 
-	node_t *new, *locn;
+	node_t *new, char *locn;
 	/* max_match is the position or entry number of the longest phrase
 	   that the current_phrase matches with */
 	/* locn is a pointer to the node with the longest string match
 	   of the current_phrase */
+
 	char *current_phrase; 
 	current_phrase = malloc((strlen(input_file)+1)*sizeof(char));
 
@@ -245,37 +255,46 @@ encode_dictionary(dictionary_t *dictionary, char *input_file,int dict_size)
 			new = assign_node_values(current_phrase, new, dict_size);
 			dictionary = insert_in_order(dictionary, new); 
 			printf("%c%d\n", current_phrase[phrase_index], max_match);
-			dict_size++;
+
 			strcpy(current_phrase, "");
 			phrase_index = 0;
 			max_match = 0;
-
+			dict_size++;	
 		}
 		else
 		{
-			if(input_file[i+1] == '\0')/* If a match is found but the next 
-										  element is a null in the string then
-										  don't look for a bigger match than the
-										  match with the penultimate element */
+			if(input_file[i+1] == '\0')
+			/* If a match is found but the next element is a null in the 
+			   string then don't look for a bigger match than the match 
+			   with the penultimate element */
 			{
-	
+				new = assign_node_values(current_phrase, new, dict_size);
+				dictionary = insert_in_order(dictionary, new); 
 				printf("%c%d\n", current_phrase[phrase_index], max_match);
-				dict_size++;
 				strcpy(current_phrase, "");
 				phrase_index = 0;
 				max_match = 0;
-
+				dict_size++;
 			}
-			else /* else the entry of locn is the largest match */
+			/* I have inserted the last factor into the dictionary but it 
+			   would not make a difference even if we didnt insert it into
+			   the dictionay */
+
+			else /* else the entry of locn is the largest match, continue*/
 			{
 				max_match = locn->entry;
 				phrase_index++;
-			
 			}	
 		}
 	}
 
-	free_dictionary(dictionary);
+	/* Printing the encoded message through stderr */
+
+	fflush(stdout);
+    fprintf(stderr, "encode: %6d bytes input\n", len);
+    fprintf(stderr, "encode: %6d factors generated\n", dict_size-1);
+    /* dict_size-1, since the first factor is "" and we don't consider
+       it according to Alistair's output */
 	free(current_phrase);
 	return; 
 }
@@ -285,6 +304,7 @@ encode_dictionary(dictionary_t *dictionary, char *input_file,int dict_size)
    size of the dictionary. Input arguments are the node_t new, 
    current_phrase and the dictionary size. Output is the prepared
    node */
+
 node_t
 *assign_node_values(char *current_phrase, node_t *new, int dict_size)
 {
@@ -296,6 +316,11 @@ node_t
 
 /****************************************************************/
          /******* Alistair's treeops module **********/ 
+/* I have modified the recursive free function to free the pointers
+   to the phrases as well */
+
+/* Function that makes empty dictionary, takes pointer to comparison
+   function as input arguments and outputs the empty dictionary */
 
 dictionary_t
 *make_empty_dictionary(int func(void*,void*)) 
@@ -306,22 +331,14 @@ dictionary_t
 	/* initialize dictionary to empty */
 	dictionary->root = NULL;
 	/* and save the supplied function pointer */
-	dictionary->cmp = func;    /* Into the cmp field of the the dictionary */     
+	dictionary->cmp = func;    /* Into the cmp field of the the 
+	                              dictionary */     
 	return dictionary;
 }
 
 /****************************************************************/
-
-int
-is_empty_dictionary(dictionary_t *dictionary) 
-{
-	assert(dictionary!=NULL);
-	return dictionary->root==NULL;
-
-}
-
-/****************************************************************/
-
+/* Function that takes the root node, key to be searched for and 
+   comparison function and recusrively searches for the key */
 static void
 *recursive_search_dictionary(node_t *root,
 		void *key, int cmp(void*,void*)) 
@@ -343,19 +360,21 @@ static void
 /****************************************************************/
 
 /* Returns a pointer to the dictionary node storing object "key",
-   if it exists, otherwise returns a NULL pointer. */
+   if it exists, otherwise returns a NULL pointer.
+   Takes dictionary and key to be searched for as input */
 void
 *search_dictionary(dictionary_t *dictionary, void *key) 
 {
 	assert(dictionary!=NULL);
-	return recursive_search_dictionary(dictionary->root, key, dictionary->cmp);
-} /* The interface function that can be called from the other side it in 
-     turn calls the recursive function */
+	return recursive_search_dictionary(dictionary->root, key,
+	                                   dictionary->cmp);
+} 
 
 /****************************************************************/
 
 /* Returns a pointer to an altered dictionary that now includes
-   the object "value" in its correct location. */
+   the object "value" in its correct location.
+   Takes dictionry and value to be inserted as input */
 dictionary_t
 *insert_in_order(dictionary_t *dictionary, void *value) 
 {
@@ -364,7 +383,7 @@ dictionary_t
 	new = malloc(sizeof(*new));
 	assert(dictionary!=NULL && new!=NULL);
 	new->data = value;
-	new->left = new->rght = NULL; /* Multiple assignment statements together */
+	new->left = new->rght = NULL; 
 	/* and insert it into the dictionary */
 	dictionary->root = recursive_insert(dictionary->root, new,
 		dictionary->cmp); /* All three are pointers */
@@ -372,7 +391,9 @@ dictionary_t
 }
 
 /****************************************************************/
-
+/* Takes root of the dictionary, the new node to be inserted and the 
+   comparison function and looks for the the current position 
+   recursively */ 
 static node_t
 *recursive_insert(node_t *root, node_t *new,
 		int cmp(void*,void*)) {
@@ -390,37 +411,17 @@ static node_t
 	}
 	return root;
 }
-
 /****************************************************************/
 
-static void
-recursive_traverse(node_t *root, void action(void*)) {
-	if (root) {
-		recursive_traverse(root->left, action);
-		action(root->data);
-		recursive_traverse(root->rght, action);
-	}
-} 
-
-/****************************************************************/
-
- /*Applies the "action" at every node in the dictionary, in
-   the order determined by the cmp function. */
-void
-traverse_dictionary(dictionary_t *dictionary, void action(void*)) 
-{
-	assert(dictionary!=NULL);
-	recursive_traverse(dictionary->root, action);
-}
-
-/****************************************************************/
-
+/* Function takes root of dictionary and recursively frees the 
+   dictionary*/
 static void
 recursive_free_dictionary(node_t *root) 
 {
 	if (root) {
 		recursive_free_dictionary(root->left);
 		recursive_free_dictionary(root->rght);
+		free(root->data);
 		free(root);
 	}
 }
@@ -428,7 +429,9 @@ recursive_free_dictionary(node_t *root)
 /****************************************************************/
 
 /* Release all memory space associated with the dictionary
-   structure. */
+   structure. 
+   Takes dictionary as input in order to free it by calling
+   recursive free tree */
 void
 free_dictionary(dictionary_t *dictionary) 
 {
@@ -437,7 +440,10 @@ free_dictionary(dictionary_t *dictionary)
 	free(dictionary);
 }
 
-/****************************************************************/
+/****************************************************************/         
+/* The End */  
+/* That's all for Comp10002 folks, see you when we design algorithms,
+   because algorithms are fun */       
 
 
 
