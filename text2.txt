@@ -1,2 +1,0 @@
-a,ab,abc,abcd,abcde
-abcde,bcde,cde,de,e
