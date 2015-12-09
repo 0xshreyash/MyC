@@ -1,14 +1,25 @@
-/* Show string manipulation, example 1.
+/* Show some facilities of the preprocessor.
 */
 #include <stdio.h>
 
+#define DEBUG
+
+#define MUDDLE(x,y)  (((x)<<(y))|((y)&((y)-1)))
+
+#ifdef DEBUG
+#define DEBUG_INT(x) printf("line %3d: %s=%d\n", \
+		__LINE__, #x, x)
+#else
+#define DEBUG_INT(x)
+#endif
+
 int
 main(int argc, char *argv[]) {
-	char *p = "Cheshire:-)";
-	while (*p) {
-		printf("p = %12p, string at p = %s\n", p, p);
-		p = p+1;
-	}
+	int i=2, j=3;
+	i = MUDDLE(i,j);
+	DEBUG_INT(i);
+	j = MUDDLE(j,i);
+	DEBUG_INT(j);
 	return 0;
 }
 

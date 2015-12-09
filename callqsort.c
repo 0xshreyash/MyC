@@ -1,3 +1,4 @@
+/* Show the use of the library qsort function.
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,8 +6,7 @@
 
 int
 string_ascending(const void *v1, const void *v2) {
-	return strcmp(*(char**)v1,*(char**)v2); /* Pointer to the array of strings*/
-	/*
+	return strcmp(*(char**)v1,*(char**)v2);
 }
 
 int
@@ -14,9 +14,8 @@ main(int argc, char *argv[]) {
 	int i;
 	char *S[] = {"koala", "kangaroo", "quoll", "quokka",
 		"wombat", "goanna", "wallaby", "bilby"};
-	qsort(S/* Pointer to the begining to the array of pointers*/
-		  , sizeof(S)/sizeof(*S), sizeof(*S), 
-		  string_ascending);
+	qsort(S, sizeof(S)/sizeof(*S), sizeof(*S), 
+			string_ascending);
 	for (i=0; i<sizeof(S)/sizeof(*S); i++) {
 		printf("%s\n", S[i]);
 	}
@@ -34,4 +33,3 @@ main(int argc, char *argv[]) {
 
    Prepared December 2012 for the Revised Edition.
    ================================================================== */
-   

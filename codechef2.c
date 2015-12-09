@@ -1,49 +1,67 @@
-#include<math.h>
-#include<string.h>
-#include<stdio.h>
-void main()
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <math.h>
+#include <string.h>
+#include <strings.h>
+
+int find_gcd(int a, int b);
+
+int main(int argc, char* argv[])
 {
-	char a[300];char b[300],c[300];int flag=0;
-	printf("Enter a String");
-	scanf("%s",a);
-	printf("Enter word to replace the string");
-	scanf("%s",b);
-	printf("Enter word to be replaced");
-	scanf("%s",c);
-	for(int i=0;i<strlen(a);i++)
+	int N, k, array[500000], run=0, max=0, gcd=1, current_gcd=1;
+	printf("Input\n");
+	scanf("%d %d", N, K);
+	
+	if(N <= 0 && N > 500000)
 	{
-		if(a[i]==c[i])
+		printf("Incorrect Input");
+		exit(EXIT_FAILURE);
+	}
+	for(i=0; i<N;i++)
+	{
+		scanf("%d ",array[i]);
+
+	}
+	for(i=0;i<N-1;i++)
+	{
+		if((gcd=find_gcd(array[i], array[i+1]))>K && run==0)
 		{
-			for(int j=0;j<strlen(b);j++)
-			{
-				if(b[j]!=a[i+j])
-				{
-					flag=1;
-				}
-			}
-			if(flag==0 && a[i+strlen(b)]==" ")
-			{	int m=i;
-				for(int j=m;j<strlen(a);j++)
-				{
-					if(j<=m+strlen(b))
-					{
-						a[j]=a[j+strlen(b)];
-					}
-					else
-					{
-						a[j]="";
-					}
-				}
-			}
+			current_gcd = gcd;
+			run++;
 		}
+		else if(gcd>K && gcd=current_gcd && run != 0)
+		{
+			run++;
+
+		}
+		else if((gcd>K && gcd!=current_gcd && run != 0))
+		{
+			if(run>max)
+			{
+				max = run;
+
+			}
+			run =0;
+			current_gcd = 1;
+		}
+	}
+	printf("Output\n");
+	printf("%d", gcd);
+
+	return 0;	
 }
-				printf("%s",a);
 
-	
+int find_gcd(int a, int b)
+{
+	int i = 0;
+	gcd = 1;
+	for(i=0;i<a; i++)
+	{
+		if( a%i==0 && b%i==0)
+		{
+			gcd = i;
+		}
+	}
+	return gcd;
 }
-				
-					
-																	
-	
-
-

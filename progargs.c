@@ -1,13 +1,13 @@
-/* Show string manipulation, example 1.
+/* Print command line arguments.
 */
 #include <stdio.h>
 
 int
 main(int argc, char *argv[]) {
-	char *p = "Cheshire:-)";
-	while (*p) {
-		printf("p = %12p, string at p = %s\n", p, p);
-		p = p+1;
+	int i;
+	printf("argc = %d\n", argc);
+	for (i=0; i<argc; i++) {
+		printf("argv[%d] = \"%s\"\n", i, argv[i]);
 	}
 	return 0;
 }
