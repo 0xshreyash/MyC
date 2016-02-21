@@ -17,18 +17,14 @@
    This mechanism becomes more effective as the size of text file
    increases. 
    I use hash tables in order to implement the dictionary
-   structure that stores the factors. The functions implementing 
+   structure that stores the factors. The implementation of
    the operations on the dictionary are taken from the material taught
-   in Comp10002 by Alistair Moffat(Semseter 2, 2015) 
-   The only difference between the manipulation of the hash table is
-   that Alistair's code has bucket elements as strings and mine has
-   them to be structures which contain a string and an entry 
-   number */
+   in Comp10002 by Alistair Moffat (Semseter 2, 2015) at the University
+   of Melbourne.
+   */
    /* P.S- We create random prime values in the hashing function
       to provide each string a unique bucket in the table which it
-      wil be an element of */
-   /* P.P.S I use hash tables beause on implementation hash table 
-      was found to be faster than my tree and trie for pg2600 */   
+      wil be an element of */   
 /****************************************************************/ 
                        /* Header Files */
 #include <stdio.h>
@@ -179,7 +175,7 @@ char
 /*******************************************************************/
 /* Function is called when space is allocated to the string,to check
    if memory allocation or reallocation is successful or not,
-   it is similar to one of Alistair Moffats programs in class */
+*/
 
 /* It takes the ptr to the string and relavent error message as input 
    arguments and exits program if memory allocation/reallocation
@@ -217,8 +213,6 @@ hash_table_t
 /* Function that takes the input file, the hash dictionary and the current
    size of the of the dictionary and process dictionary in order to create
    the processed dictionary */
-/* P.S - The function is only 30 statements but it looks longer due to 
-   white spaces and comments that try to explain it */
 
 hash_table_t
 *encode_inputs(char *input_file, hash_table_t *dict, int current_size)
@@ -305,7 +299,7 @@ hash_table_t
 /*******************************************************************/
 
 /* Function creates a empty hash table, it takes in the size of the hash
-   table, which is assigned in maim, it reutrns the empty hash table */
+   table, which is assigned in maim, it returns the empty hash table */
 
 hash_table_t
 *create_hash_table(int size)
@@ -338,11 +332,6 @@ hash_table_t
 
 /*******************************************************************/
 /*******************************************************************/
-
-/* Following function is the same as Alistair Moffat's with the only
-   difference being that I store the key in the string called 
-   phrase which is an element of the struct which is the element
-   of each bucket and thus compare with the phrase */
 
 /* Function takes pointer to the hash table and the character to be 
    searched for as input and returns the location of the found item
@@ -377,11 +366,6 @@ table_search(hash_table_t *dict, char *key)
 
 /*******************************************************************/
 /*******************************************************************/
-
-/* Following function is the same as Alistair Moffat's with the only
-    difference being that I store the key in the string called 
-    phrase which is an element of the struct which is the element
-    of each bucket */
 
 /* Function takes the hash table, key to be inserted and the size of 
    the dictionary as input and return the dictionary with the key
@@ -431,11 +415,7 @@ hash_table_t
 /*******************************************************************/
 /*******************************************************************/
 
- /* Following functions free the memory allocated by the program and
-    is the same as Alistair's functions for freeing apart from the 
-    fact that I have a struct instead of a string as my data_t in each
-    function so we free both the pointer to the data_t as well as the 
-    string associated with the data_t */
+ /* Following functions free the memory allocated by the program */
 
 /*******************************************************************/
 
@@ -482,12 +462,6 @@ hash_func_free(hashfunc_t *h)
 }
 
 /*******************************************************************/
-/*******************************************************************/
-
-/* This part contains the functions associated with hashing 
-   function, it is the same as Alistair Moffat's creation 
-   of the hashing function. */ 
-
 /*******************************************************************/
 
 /* 	Function takes a number as input and checks whether it is 
@@ -576,15 +550,12 @@ hash_func_calculate(hashfunc_t *h, char *key)
 			k=0;
 		}
 	}
-	/* Using Alistair's hashing method to give unique index to the 
-	   key */
 	return hval % h->tabsize; 
 }
 
 /*******************************************************************/
 /*******************************************************************/
-/*                  The End                                        */
-/* Thats all for Comp10002 folks, see you next year in design of
-   algorithms because algorithms are fun */
+/*                            The End                              */
+/*                        Thats all folks                          */
 
 
