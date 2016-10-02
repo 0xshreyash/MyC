@@ -1,6 +1,7 @@
-/*Approximate text match score generating prrogram
- *Implemented in 4 stages
- *Written by Shreyash Patodia for Comp10002,(Algorithms are fun) in 2015
+/*
+ * Approximate text match score generating prrogram
+ * Implemented in 4 stages
+ * Written by Shreyash Patodia for Comp10002,(Algorithms are fun) in 2015
  *
  */
  
